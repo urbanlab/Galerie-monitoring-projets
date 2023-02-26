@@ -1,0 +1,29 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+
+    // Python settings
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "120"],
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+
+    // TypeScript settings
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        // organize imports
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+
+    // Prettier settings
+    // "editor.formatOnSaveMode": "modifications",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.printWidth": 120,
+    "prettier.tabWidth": 4,
+    "prettier.singleQuote": false,
+    "prettier.trailingComma": "all",
+    "prettier.bracketSpacing": true
+}

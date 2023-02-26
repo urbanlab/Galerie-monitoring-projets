@@ -1,0 +1,23 @@
+# Ignore local development files and directories
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.swp
+
+# Ignore FastAPI server files and directories
+__init__.py
+# *.db
+# *.sqlite
+*.tar.gz
+*.whl
+*.pyc
+*.pyo
+
+# Ignore Docker-specific files and directories
+.dockerignore
+.docker/
+.git/
+README.md
+LICENSE

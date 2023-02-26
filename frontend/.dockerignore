@@ -1,0 +1,22 @@
+# Ignore local development files and directories
+node_modules/
+build/
+yarn-error.log
+yarn.lock
+npm-debug.log*
+*.log
+*.swp
+
+# Ignore React-specific files and directories
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Ignore Docker-specific files and directories
+.dockerignore
+.docker/
+.git/
+README.md
+LICENSE
