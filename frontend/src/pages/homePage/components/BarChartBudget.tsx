@@ -1,19 +1,16 @@
 import { ResponsiveBar } from "@nivo/bar";
-import { Columns, Projet } from "../../../models";
+import { Projet } from "../../../models";
 
 interface Props {
     projects: Projet[];
-    columns: Columns | undefined;
 }
 
-interface ColorMap {
-    [key: string]: string;
-}
-
+//calcul le budget total de tous les projets sur chaque type d'activité
 const getBudgetByActivity = (projets: Projet[]) => {
     const data: { activity: string; budget: number }[] = [];
     projets.forEach((projet) => {
         if (projet.type_activite?.text != null) {
+            //ignore les projets sans type d'activité
             if (projet.budget_global != null) {
                 const index = data.findIndex((a) => a.activity === projet.type_activite?.text);
                 const activity = projet.type_activite?.text;
@@ -41,11 +38,8 @@ const getBudgetByActivity = (projets: Projet[]) => {
 };
 
 const BarChartBudget = (props: Props) => {
-    const { projects, columns } = props;
-    const activity = columns?.types_activite?.map((activity) => activity.text) ?? [];
-    console.log(activity);
+    const { projects } = props;
     const data = getBudgetByActivity(projects);
-    console.log(data);
     return (
         <ResponsiveBar
             data={data}
@@ -73,10 +67,10 @@ const BarChartBudget = (props: Props) => {
             axisLeft={{
                 tickSize: 5,
                 tickPadding: 5,
-                tickRotation: 0,
-                legend: "Budget total",
+                tickRotation: -0,
+                legend: "Budget total en Euro",
                 legendPosition: "middle",
-                legendOffset: -40,
+                legendOffset: -55,
             }}
             labelSkipWidth={12}
             labelSkipHeight={12}
