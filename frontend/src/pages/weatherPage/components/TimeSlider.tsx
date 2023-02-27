@@ -24,7 +24,6 @@ export function TimeSlider(props: Props) {
         <Box sx={{ width: window.innerWidth * 0.5 }}>
             <Slider
                 onChange={(event, value: any) => {
-                    console.log(event);
                     onChange(allProjectsHistory.listOfDates[value]);
                 }}
                 defaultValue={30}

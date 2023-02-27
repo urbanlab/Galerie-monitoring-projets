@@ -108,7 +108,6 @@ export class AllProjectsHistory {
                 });
             }
         }
-        console.log("projectsAtThisDate", projectsAtThisDate);
         return projectsAtThisDate;
     }
 }

@@ -3,7 +3,7 @@ import { ResponsivePie } from "@nivo/pie";
 import { Columns, Projet } from "../../../models";
 
 import { augmentSaturation } from "../../circlePackingPage/circlePackingDataFormat";
-import { ColorMap } from "./meteoCircleChart";
+import { ColorMap } from "./MeteoCircleChart";
 
 interface Props {
     projects: Projet[];
@@ -65,101 +65,7 @@ export const PieChart = (props: Props) => {
                 from: "color",
                 modifiers: [["darker", 2]],
             }}
-            // defs={[
-            //     {
-            //         id: 'dots',
-            //         type: 'patternDots',
-            //         background: 'inherit',
-            //         color: 'rgba(255, 255, 255, 0.3)',
-            //         size: 4,
-            //         padding: 1,
-            //         stagger: true
-            //     },
-            //     {
-            //         id: 'lines',
-            //         type: 'patternLines',
-            //         background: 'inherit',
-            //         color: 'rgba(255, 255, 255, 0.3)',
-            //         rotation: -45,
-            //         lineWidth: 6,
-            //         spacing: 10
-            //     }
-            // ]}
-            // fill={[
-            //     {
-            //         match: {
-            //             id: 'ruby'
-            //         },
-            //         id: 'dots'
-            //     },
-            //     {
-            //         match: {
-            //             id: 'c'
-            //         },
-            //         id: 'dots'
-            //     },
-            //     {
-            //         match: {
-            //             id: 'go'
-            //         },
-            //         id: 'dots'
-            //     },
-            //     {
-            //         match: {
-            //             id: 'python'
-            //         },
-            //         id: 'dots'
-            //     },
-            //     {
-            //         match: {
-            //             id: 'scala'
-            //         },
-            //         id: 'lines'
-            //     },
-            //     {
-            //         match: {
-            //             id: 'lisp'
-            //         },
-            //         id: 'lines'
-            //     },
-            //     {
-            //         match: {
-            //             id: 'elixir'
-            //         },
-            //         id: 'lines'
-            //     },
-            //     {
-            //         match: {
-            //             id: 'javascript'
-            //         },
-            //         id: 'lines'
-            //     }
-            // ]}
-            // legends={[
-            //     {
-            //         anchor: 'left',
-            //         direction: 'column',
-            //         justify: false,
-            //         translateX: -50,
-            //         translateY: 0,
-            //         itemsSpacing: 32,
-            //         itemWidth: 100,
-            //         itemHeight: 18,
-            //         itemTextColor: '#666',
-            //         itemDirection: 'left-to-right',
-            //         itemOpacity: 1,
-            //         symbolSize: 18,
-            //         symbolShape: 'circle',
-            //         effects: [
-            //             {
-            //                 on: 'hover',
-            //                 style: {
-            //                     itemTextColor: '#000'
-            //                 }
-            //             }
-            //         ]
-            //     }
-            // ]}
+           
         />
     );
 };

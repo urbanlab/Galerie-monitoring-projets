@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Columns, ProjectHistory, Projet } from "../../models";
 import { privateQuery } from "../../services";
-import { useAnimateValue } from "./components/AnimateElements";
+//import { useAnimateValue } from "./components/AnimateElements";
+import { AnimateElements } from "./components/AnimateElements";
 import { TimeSlider } from "./components/TimeSlider";
 import { WeatherChart } from "./components/WeatherChart";
 import { WeatherMenu } from "./components/WeatherMenu";
@@ -42,7 +43,6 @@ export const WeatherPage = (props: Props) => {
                     project.id === updatedProject.id ? updatedProject : project,
                 );
                 setAllProjects(newProjects);
-                console.log("set all projects");
             })
             .catch((err: any) => {
                 console.log(err);
@@ -139,8 +139,7 @@ export const WeatherPage = (props: Props) => {
         document.body.removeChild(downloadLink);
     }
 
-    const startAnimation = useAnimateValue(setElements, filters, applyFilters, 150);
-
+    const startAnimation = AnimateElements(setElements);
     const setElementAtThisDate = (date: string) => {
         var endElements: DragElement[] = allProjectsHistory
             .getListOfProjectsAtThisDate(allProjects, date)
@@ -217,6 +216,7 @@ export const WeatherPage = (props: Props) => {
                 menu={menu}
                 setMenu={setMenu}
             />
+
             {buildChart()}
             {filters.mode == "evolution" && (
                 <div className="d-flex" style={{ marginTop: 60, justifyContent: "center" }}>
