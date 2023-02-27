@@ -263,6 +263,33 @@ async def update_etape_meteo(project_id: str, etape_meteo: EtapeMeteo, valid_tok
     return {"message": "Etape précise et météo précise mise à jour"}
 
 
+class Meteo_commentaire(BaseModel):
+    comment: str
+
+
+@app.post("/update_meteo_comment/{project_id}", status_code=201, tags=["Notion"], response_model=dict)
+async def update_meteo_comment(
+    project_id: str,
+    meteo_comment: Meteo_commentaire,
+):
+    """Met à jour le commentaire de la météo d'un projet
+
+    Args:
+        project_id (str): ID du projet à mettre à jour
+        meteo_comment (str): commentaire de la météo
+
+    Returns:
+        dict: message de confirmation
+    """
+    logger.info(f"Request from front on /update_meteo_comment to update project {project_id}...")
+    loop = asyncio.get_event_loop()
+    coroutine = await loop.run_in_executor(
+        None, apiNotion.update_meteo_comment, project_id, meteo_comment.comment, projects
+    )
+    await coroutine
+    return {"message": "Commentaire de la météo mise à jour"}
+
+
 @app.post("/init_etape_meteo/", status_code=201, tags=["ADMIN"], response_model=dict)
 async def init_etape_meteo(valid_token: bool = Depends(is_valid_user)):
     """Met à jour l'étape précise et la météo précise d'un projet quand on a pas de données

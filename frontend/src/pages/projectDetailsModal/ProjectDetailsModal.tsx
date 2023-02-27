@@ -4,6 +4,7 @@ import {
     faCalendarDays,
     faCircleQuestion,
     faClockRotateLeft,
+    faComment,
     faFilePen,
     faFlask,
     faHandshake,
@@ -331,6 +332,16 @@ const ProjectDetailsModal: React.FC<Props> = ({ project, onClose }) => {
                         <div className="px-3" style={{ width: "100%", height: 250 }}>
                             <ProjectTimeChart projectHistory={projectHistory} type={"meteo"} />
                         </div>
+                    </div>
+                )}
+
+                {/* =============== Meteo commentaire =============== */}
+                {project.meteo_commentaire && (
+                    <div className="mb-3" key="meteo_commentaire">
+                        <strong>
+                            <FontAwesomeIcon icon={faComment} /> Commentaire météo :
+                        </strong>{" "}
+                        {project.meteo_commentaire}
                     </div>
                 )}
             </Modal.Body>

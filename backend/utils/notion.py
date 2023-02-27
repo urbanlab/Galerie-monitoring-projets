@@ -249,6 +249,35 @@ class APINotion:
                 projects,
             )
 
+    async def update_meteo_comment(self, page_id: str, meteo_comment: str, projects: list[Projet]) -> None:
+        """Update the meteo comment of a project
+
+        Args:
+            page_id (str): The id of the project
+            meteo_comment (str): The meteo comment
+
+        Example:
+            >>> api = API_Notion()
+            >>> await api.update_meteo_comment("id", "comment")
+        """
+
+        # Make the request
+        successful_request = await self.make_request(
+            "PATCH",
+            f"pages/{page_id}",
+            properties={"Commentaire météo": {"rich_text": [{"text": {"content": meteo_comment}}]}},
+        )
+
+        # If the request was successful, update the project in the local variable
+        if successful_request is not None:
+            update_project(
+                page_id,
+                [
+                    {"property": "meteo_comment", "value": meteo_comment},
+                ],
+                projects,
+            )
+
     async def init_etape_meteo(self, columns: Columns, projects: list[Projet]) -> None:
         """Initialize etape and meteo precise for all projects if not already set
 

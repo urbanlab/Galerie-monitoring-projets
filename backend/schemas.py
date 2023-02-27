@@ -67,6 +67,7 @@ class Projet(BaseModel):
     etape_precise: float | None
     meteo: str | None
     meteo_precise: float | None
+    meteo_commentaire: str
     politiques_publiques: List[colored_text]
     directeur_projet: List[people]
     chef_de_projet_ou_referent: List[people]

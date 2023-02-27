@@ -31,6 +31,7 @@ export interface Projet {
     etape_precise: number | null;
     meteo: string | null;
     meteo_precise: number | null;
+    meteo_commentaire: string;
     politiques_publiques: ColoredText[];
     directeur_projet: People[];
     chef_de_projet_ou_referent: People[];

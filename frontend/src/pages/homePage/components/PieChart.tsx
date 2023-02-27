@@ -3,7 +3,7 @@ import { ResponsivePie } from "@nivo/pie";
 import { Columns, Projet } from "../../../models";
 
 import { augmentSaturation } from "../../circlePackingPage/circlePackingDataFormat";
-import { ColorMap } from "./meteoCircleChart";
+import { ColorMap } from "./MeteoCircleChart";
 
 interface Props {
     projects: Projet[];

@@ -20,7 +20,6 @@
 
     // Prettier settings
     // "editor.formatOnSaveMode": "modifications",
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "prettier.printWidth": 120,
     "prettier.tabWidth": 4,
     "prettier.singleQuote": false,
