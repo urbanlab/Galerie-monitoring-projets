@@ -273,7 +273,7 @@ class APINotion:
             update_project(
                 page_id,
                 [
-                    {"property": "meteo_comment", "value": meteo_comment},
+                    {"property": "meteo_commentaire", "value": meteo_comment},
                 ],
                 projects,
             )

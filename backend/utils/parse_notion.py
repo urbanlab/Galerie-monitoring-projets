@@ -1,7 +1,6 @@
 from pprint import pprint
 
-from schemas import (Columns, Projet, Raw_Notion_Page, colored_text, icon,
-                     people, periode)
+from schemas import Columns, Projet, Raw_Notion_Page, colored_text, icon, people, periode
 
 
 def parse_notion_page(page: Raw_Notion_Page) -> Projet:
