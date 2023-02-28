@@ -27,7 +27,7 @@ const MeteoCircleChart = ({ meteo /* see data tab */ }: Props) => {
             <div className="d-block m-auto" style={{ width: 0.2 * window.innerWidth, height: "30vh" }}>
                 <ResponsiveCirclePacking
                     data={meteo}
-                    margin={{ top: 0, right: 20, bottom: 40, left: 20 }}
+                    margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
                     id="name"
                     value="loc"
                     leavesOnly={true}

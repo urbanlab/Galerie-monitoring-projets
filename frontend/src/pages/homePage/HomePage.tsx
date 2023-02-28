@@ -60,44 +60,54 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
         getColumns();
     }, []);
     return (
-        <Container fluid style={{backgroundColor: "#DEDEDE", border: "solid", borderWidth: "1px", borderColor: "#DEDEDE" }}>
-            <Row className="my-5 mx-3">
-                <Col md={7} className="p-2" style={styles.colStep}>
-                        <p style={styles.title} className="m-2">
-                            Nombre des projets selon l'étape
-                        </p>
-                    <div style={styles.chart}>
-                        <BarChart projects={projets} columns={columns} />
-                    </div>
-                </Col>
-                <Col md={3} className="p-2" style={styles.colMeteo}>
-                    <p style={styles.title} className="m-2">
-                        Méteo
-                    </p>
-                    <div style={styles.chart} className="m-auto">
-                        {meteoFormatted && <MeteoCircleChart meteo={meteoFormatted} />}
-                    </div>
-                </Col>
-            </Row>
-            <Row className="my-5 mx-3">
-                <Col md={7} className="p-2" style={styles.colBudget}>
-                    <p style={styles.title} className="m-2">
-                        Budget par type d'activité
-                    </p>
-                    <div style={{ ...styles.chart, marginLeft: "20px" }}>
-                        <BarChartBudget projects={projets}></BarChartBudget>
-                    </div>
-                </Col>
+        <div className="col-xl-10 col-lg-12 mx-auto text-center">
+            <Container fluid>
+                <Row className="mx-5 mb-1">
+                    <Col md={8} className="ps-5 pe-3 pt-5 pb-4">
+                        <div className="p-2 bg-light" style={styles.shadow}>
+                            <p style={styles.title} className="m-2">
+                                Nombre des projets selon l'étape
+                            </p>
+                            <div style={styles.chart} className="p-3">
+                                <BarChart projects={projets} columns={columns} />
+                            </div>
+                        </div>
+                    </Col>
+                    <Col md={4} className="ps-3 pe-5 pt-5 pb-4">
+                        <div className="p-2 bg-light" style={styles.shadow}>
+                            <p style={styles.title} className="m-2">
+                                Méteo
+                            </p>
+                            <div style={styles.chart} className="m-auto">
+                                {meteoFormatted && <MeteoCircleChart meteo={meteoFormatted} />}
+                            </div>
+                        </div>
+                    </Col>
+                </Row>
+                <Row className="mx-5 my-1">
+                    <Col md={8} className="ps-5 pe-3 pb-5">
+                        <div className="p-2 bg-light" style={styles.shadow}>
+                            <p style={styles.title} className="m-2">
+                                Budget par type d'activité
+                            </p>
+                            <div style={{ ...styles.chart }} className="p-3">
+                                <BarChartBudget projects={projets}></BarChartBudget>
+                            </div>
+                        </div>
+                    </Col>
 
-                <Col md={3} className="p-2" style={styles.colStatus}>
-                    <p style={styles.title} className="m-2">
-                        Status des projets
-                    </p>
-                    <div style={styles.chart} className="m-auto">
-                        <PieChart projects={projets} columns={columns} />
-                    </div>
-                </Col>
-            </Row>
-        </Container>
+                    <Col md={4} className="ps-3 pe-5 pb-5">
+                        <div className="p-2 bg-light" style={styles.shadow}>
+                            <p style={styles.title} className="m-2">
+                                Status des projets
+                            </p>
+                            <div style={styles.chart} className="m-auto">
+                                <PieChart projects={projets} columns={columns} />
+                            </div>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
+        </div>
     );
 };

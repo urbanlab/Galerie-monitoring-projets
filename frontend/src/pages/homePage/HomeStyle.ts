@@ -1,32 +1,19 @@
 export const styles: any = {
-    colStep: {
-        boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
-        margin: "3vh 1vw 1vh 5vw",
-        backgroundColor: "white",
-    },
-    colMeteo: {
-        boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
-        margin: "3vh 5vw 1vh 1vw",
-        backgroundColor: "white",
-    },
-    colBudget: {
-        boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
-        margin: "1vh 1vw 3vh 5vw",
-        backgroundColor: "white",
-    },
-    colStatus: {
-        boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
-        margin: "1vh 5vw 3vh 1vw",
-        backgroundColor: "white",
+    shadow: {
+        boxShadow: "rgba(0, 0, 0, 0.5) 3px 3px 8px",
     },
     title: {
-        fontSize: "20px",
+        fontSize: "1em",
         fontWeight: "bold",
-        textAlign: "left", height: "3vh", borderBottom: "solid", borderWidth: "1px"
+        textAlign: "left",
+        height: "3vh",
+        borderBottom: "solid",
+        borderWidth: "1px",
+        borderColor: "#cdcdcd",
     },
     chart: {
         height: "32vh",
         width: "100%",
-        backgroundcolor: "gray"
-    }
+        backgroundcolor: "white",
+    },
 };

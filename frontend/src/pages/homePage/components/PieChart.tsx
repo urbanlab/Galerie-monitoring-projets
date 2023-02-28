@@ -41,7 +41,7 @@ export const PieChart = (props: Props) => {
     return (
         <ResponsivePie
             data={data}
-            margin={{ top: 40, right: 80, bottom: 80, left: 120 }}
+            margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
             innerRadius={0.5}
             padAngle={0.7}
             colors={function (e) {

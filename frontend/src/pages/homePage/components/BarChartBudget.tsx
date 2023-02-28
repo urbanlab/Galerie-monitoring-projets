@@ -45,7 +45,7 @@ const BarChartBudget = (props: Props) => {
             data={data}
             keys={["budget"]}
             indexBy="activity"
-            margin={{ top: 20, right: 130, bottom: 70, left: 60 }}
+            margin={{ top: 20, right: 40, bottom: 80, left: 100 }}
             padding={0.3}
             valueScale={{ type: "linear" }}
             indexScale={{ type: "band", round: true }}
@@ -70,10 +70,11 @@ const BarChartBudget = (props: Props) => {
                 tickRotation: -0,
                 legend: "Budget total en Euro",
                 legendPosition: "middle",
-                legendOffset: -55,
+                legendOffset: -75,
             }}
             labelSkipWidth={12}
             labelSkipHeight={12}
+            valueFormat={(value) => `${value} €`}
             labelTextColor={{
                 from: "color",
                 modifiers: [["darker", 1.6]],
