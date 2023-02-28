@@ -83,46 +83,39 @@ export const WeatherPage = (props: Props) => {
             });
     }
 
-    const applyFilters = (elements: DragElement[], filters: Filters) => {
-        setElements(
-            elements.map((item) => {
-                let isVisible = true;
-                if (
-                    filters.directeurProjet !== "all" &&
-                    !item.project.directeur_projet?.map((directeur) => directeur.name).includes(filters.directeurProjet)
-                ) {
-                    isVisible = false;
-                }
-                if (
-                    filters.referentsProjet !== "all" &&
-                    !item.project.chef_de_projet_ou_referent
-                        ?.map((referent) => referent.name)
-                        .includes(filters.referentsProjet)
-                ) {
-                    isVisible = false;
-                }
-                if (
-                    filters.politiquesPubliques !== "all" &&
-                    !item.project.politiques_publiques
-                        ?.map((politique_publique) => politique_publique.text)
-                        .includes(filters.politiquesPubliques)
-                ) {
-                    isVisible = false;
-                }
-                if (filters.typeActivite !== "all" && item.project.type_activite?.text !== filters.typeActivite) {
-                    isVisible = false;
-                }
-                if (
-                    filters.etat !== "all" && item.project.etat?.text !== filters.etat) {
-                    isVisible = false;
-                }
-                return {
-                    ...item,
-                    isVisible: isVisible,
-                };
-            }),
-        );
-    };
+    const isProjectVisible = (project: Projet) => {
+        let isVisible = true;
+        if (
+            filters.directeurProjet !== "all" &&
+            !project.directeur_projet?.map((directeur) => directeur.name).includes(filters.directeurProjet)
+        ) {
+            isVisible = false;
+        }
+        if (
+            filters.referentsProjet !== "all" &&
+            !project.chef_de_projet_ou_referent
+                ?.map((referent) => referent.name)
+                .includes(filters.referentsProjet)
+        ) {
+            isVisible = false;
+        }
+        if (
+            filters.politiquesPubliques !== "all" &&
+            !project.politiques_publiques
+                ?.map((politique_publique) => politique_publique.text)
+                .includes(filters.politiquesPubliques)
+        ) {
+            isVisible = false;
+        }
+        if (filters.typeActivite !== "all" && project.type_activite?.text !== filters.typeActivite) {
+            isVisible = false;
+        }
+        if (
+            filters.etat !== "all" && project.etat?.text !== filters.etat) {
+            isVisible = false;
+        }
+        return isVisible
+    }
 
     function handleExport() {
         const svg = chartRef.current.querySelector("svg");
@@ -138,17 +131,17 @@ export const WeatherPage = (props: Props) => {
 
     const startAnimation = AnimateElements(setElements);
     const setElementAtThisDate = (date: string) => {
-        var endElements: DragElement[] = allProjectsHistory
-            .getListOfProjectsAtThisDate(allProjects, date)
-            .map((project, index) => {
-                return {
+        var endElements: DragElement[] = [];
+        for (var project of allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date)) {
+            if (isProjectVisible(project)) {
+                endElements.push({
                     xNorm: project.etape_precise ?? 0,
                     yNorm: 1 - (project.meteo_precise ?? 1),
                     project: project,
-                    isVisible: true,
-                };
-            });
-        startAnimation(elements, endElements);
+                });
+            }
+            startAnimation(elements, endElements);
+        }
     };
 
     useEffect(() => {
@@ -163,25 +156,26 @@ export const WeatherPage = (props: Props) => {
     //initialize elements
     useEffect(() => {
         if (filters.mode == "edition") {
-            var elements: DragElement[] = chartProjects.map((project, index) => {
-                return {
-                    xNorm: project.etape_precise ?? 0,
-                    yNorm: 1 - (project.meteo_precise ?? 1),
-                    xStart: 0,
-                    yStart: 0,
-                    offsetX: 0,
-                    offsetY: 0,
-                    active: false,
-                    project: project,
-                    isVisible: true,
-                };
-            });
-            setElements(elements);
-            applyFilters(elements, filters);
+            var newElements: DragElement[] = [];
+            for (var project of chartProjects) {
+                if (isProjectVisible(project)) {
+                    newElements.push({
+                        xNorm: project.etape_precise ?? 0,
+                        yNorm: 1 - (project.meteo_precise ?? 1),
+                        xStart: 0,
+                        yStart: 0,
+                        offsetX: 0,
+                        offsetY: 0,
+                        active: false,
+                        project: project,
+                    });
+                }
+            }
+            startAnimation(elements, newElements, 150);
         } else {
             setElementAtThisDate(selectedDate);
         }
-    }, [refresh, filters.mode]);
+    }, [refresh, filters]);
 
     const buildChart = () => {
         return (
@@ -203,10 +197,8 @@ export const WeatherPage = (props: Props) => {
         <div className="px-3 py-3">
             <WeatherMenu
                 menuRef={menuRef}
-                applyFilters={applyFilters}
                 setFilters={setFilters}
                 filters={filters}
-                elements={elements}
                 chartProjects={chartProjects}
                 columns={columns}
                 handleExport={handleExport}

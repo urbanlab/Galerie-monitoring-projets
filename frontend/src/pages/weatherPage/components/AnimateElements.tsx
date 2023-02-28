@@ -39,11 +39,10 @@ export function animateElements(
 }
 
 export const AnimateElements = (setElements: (elements: DragElement[]) => void,) => {
-    const duration = 300;
     let request: number;
     const easing = (t: number) => -t * (t - 2);
 
-    const startAnimation = (startElements: DragElement[], endElements: DragElement[]) => {
+    const startAnimation = (startElements: DragElement[], endElements: DragElement[], duration: number = 300) => {
         let start: any = null;
         const performAnimation = (timestamp: any) => {
             if (!start) start = timestamp;

@@ -10,7 +10,6 @@ export interface DragElement {
     color?: string;
     project: Projet;
     active?: boolean;
-    isVisible: boolean;
     opacity?: number;
 }
 

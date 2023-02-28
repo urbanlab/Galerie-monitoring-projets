@@ -18,7 +18,6 @@ export const ProjectItem = (props: Props) => {
     const labelWidth = Math.max(100, Math.min(300, 8 * radius));
 
     const [showLabel, setShowLabel] = useState(false);
-
     const buildLogo = () => {
         let icon;
         if (item.project.icon?.type === "emoji" || item.project.icon?.type == null) {
@@ -137,8 +136,15 @@ export const ProjectItem = (props: Props) => {
             <foreignObject
                 x={xCoord - radius}
                 y={yCoord - radius}
-                onPointerDown={(evt) => handlePointerDown(index, evt)}
-                onDoubleClick={(_) => onShowDetails(item.project.id)}
+                onPointerDown={(evt) => {
+
+                    handlePointerDown(index, evt)
+                }}
+                onDoubleClick={(_) => {
+
+                    onShowDetails(item.project.id)
+
+                }}
                 style={{
                     height: 2 * radius,
                     width: 2 * radius,
@@ -149,6 +155,5 @@ export const ProjectItem = (props: Props) => {
             </foreignObject>
         </svg>
     );
-
-    return <Fade children={svg} in={item.isVisible} duration={150} />;
+    return svg;
 };
