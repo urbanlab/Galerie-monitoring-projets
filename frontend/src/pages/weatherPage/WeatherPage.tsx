@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Columns, ProjectHistory, Projet } from "../../models";
 import { privateQuery } from "../../services";
-//import { useAnimateValue } from "./components/AnimateElements";
 import { AnimateElements } from "./components/AnimateElements";
 import { TimeSlider } from "./components/TimeSlider";
 import { WeatherChart } from "./components/WeatherChart";
@@ -31,9 +30,9 @@ export const WeatherPage = (props: Props) => {
     const chartProjects = allProjects.filter(
         (project) =>
             project.meteo_precise != null &&
-            project.etape_precise != null &&
-            project.etat != null &&
-            (project.etat.text.includes("En cours") || project.etat.text.includes("En attente")),
+            project.etape_precise != null //&&
+        // project.etat != null &&
+        // (project.etat.text.includes("En cours") || project.etat.text.includes("En attente")),
     );
 
     async function updateProject(projectId: string) {
@@ -114,9 +113,7 @@ export const WeatherPage = (props: Props) => {
                     isVisible = false;
                 }
                 if (
-                    filters.besoinsLab !== "all" &&
-                    !item.project.besoins_lab?.map((besoinLab) => besoinLab.text).includes(filters.besoinsLab)
-                ) {
+                    filters.etat !== "all" && item.project.etat?.text !== filters.etat) {
                     isVisible = false;
                 }
                 return {

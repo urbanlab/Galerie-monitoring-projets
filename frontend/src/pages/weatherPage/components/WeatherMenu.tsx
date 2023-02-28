@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import { Columns, Projet } from "../../../models";
 import { DragElement, Filters, MenuOptions } from "../weatherModels";
 import { styles } from "../WeatherStyle";
-import { Select } from "./Select";
+import { Select } from "./FilterSelect";
 
 interface Props {
     menu: string;
@@ -109,11 +109,11 @@ export const WeatherMenu = (props: Props) => {
                 </div>
                 <div style={styles.singleFilterContainer}>
                     <Select
-                        title={"Besoins Lab"}
-                        options={columns?.besoins_lab.map((item) => item.text) ?? []}
-                        value={filters.besoinsLab}
+                        title={"Etat"}
+                        options={columns?.etats.map((etat) => etat.text) ?? []}
+                        value={filters.etat}
                         onChange={(value: string) => {
-                            var newFilters = new Filters({ ...filters, besoinsLab: value });
+                            var newFilters = new Filters({ ...filters, etat: value });
                             applyFilters(elements, newFilters);
                             setFilters(newFilters);
                         }}
