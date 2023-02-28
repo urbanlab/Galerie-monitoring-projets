@@ -119,78 +119,76 @@ const App = () => {
             <BrowserRouter>
                 {/* === Navbar === */}
                 <NavBar isLoading={isLoading} nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange} />
-
                 {/* === Project Details Modal === */}
                 {selectedProject && (
                     <ProjectDetailsModal project={selectedProject} onClose={() => setSelectedProjectId(null)} />
                 )}
 
                 {/* === Routes === */}
-                <Routes>
-                    {/* Route to / */}
+                    <Routes>
+                        {/* Route to / */}
+                        <Route
+                            path="/"
+                            element={
+                                <PrivateRoute>
+                                    <HomePage projets={sortedProjects} setIsLoading={setIsLoading}></HomePage>
+                                </PrivateRoute>
+                            }
+                        />
 
-                    <Route
-                        path="/"
-                        element={
-                            <PrivateRoute>
-                                <HomePage projets={sortedProjects} setIsLoading={setIsLoading}></HomePage>
-                            </PrivateRoute>
-                        }
-                    />
+                        {/* Route to /table */}
+                        <Route
+                            path="/table"
+                            element={
+                                <PrivateRoute>
+                                    <ProjectsTable
+                                        projets={sortedProjects}
+                                        onShowDetails={showProjectDetails}
+                                        handleSort={handleSort}
+                                        sortDirection={sortDirection}
+                                        sortColumn={sortColumn}
+                                    />
+                                </PrivateRoute>
+                            }
+                        />
 
-                    {/* Route to /table */}
-                    <Route
-                        path="/table"
-                        element={
-                            <PrivateRoute>
-                                <ProjectsTable
-                                    projets={sortedProjects}
-                                    onShowDetails={showProjectDetails}
-                                    handleSort={handleSort}
-                                    sortDirection={sortDirection}
-                                    sortColumn={sortColumn}
-                                />
-                            </PrivateRoute>
-                        }
-                    />
+                        {/* Route to /meteo */}
+                        <Route
+                            path="/weather"
+                            element={
+                                <PrivateRoute>
+                                    <WeatherPage
+                                        setIsLoading={setIsLoading}
+                                        onShowDetails={showProjectDetails}
+                                        allProjects={projets}
+                                        setAllProjects={setProjects}
+                                        refresh={refresh}
+                                    />
+                                </PrivateRoute>
+                            }
+                        />
 
-                    {/* Route to /meteo */}
-                    <Route
-                        path="/weather"
-                        element={
-                            <PrivateRoute>
-                                <WeatherPage
-                                    setIsLoading={setIsLoading}
-                                    onShowDetails={showProjectDetails}
-                                    allProjects={projets}
-                                    setAllProjects={setProjects}
-                                    refresh={refresh}
-                                />
-                            </PrivateRoute>
-                        }
-                    />
+                        {/* Route to /timeline */}
+                        <Route
+                            path="/circleCharts"
+                            element={
+                                <PrivateRoute>
+                                    <div className="d-flex justify-content-center mt-5 m-auto">
+                                        <MyResponsiveCirclePacking projets={projets} />
+                                    </div>
+                                </PrivateRoute>
+                            }
+                        />
 
-                    {/* Route to /timeline */}
-                    <Route
-                        path="/circleCharts"
-                        element={
-                            <PrivateRoute>
-                                <div className="d-flex justify-content-center mt-5 m-auto">
-                                    <MyResponsiveCirclePacking projets={projets} />
-                                </div>
-                            </PrivateRoute>
-                        }
-                    />
-
-                    <Route
-                        path="/login"
-                        element={
-                            <OnlyPublicRoute>
-                                <Login setToken={setToken} />
-                            </OnlyPublicRoute>
-                        }
-                    />
-                </Routes>
+                        <Route
+                            path="/login"
+                            element={
+                                <OnlyPublicRoute>
+                                    <Login setToken={setToken} />
+                                </OnlyPublicRoute>
+                            }
+                        />
+                    </Routes>
             </BrowserRouter>
         </div>
     );

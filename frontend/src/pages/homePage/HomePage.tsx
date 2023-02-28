@@ -60,17 +60,17 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
         getColumns();
     }, []);
     return (
-        <Container fluid style={{ backgroundColor:"#DEDEDE"}}>
-            <Row  className="my-5 mx-3">
-                <Col md={7} className="p-2" style={styles.col}>
-                    <p style={styles.title} className="m-2">
-                        Nombre des projets selon l'étape
-                    </p>
+        <Container fluid style={{backgroundColor: "#DEDEDE", border: "solid", borderWidth: "1px", borderColor: "#DEDEDE" }}>
+            <Row className="my-5 mx-3">
+                <Col md={7} className="p-2" style={styles.colStep}>
+                        <p style={styles.title} className="m-2">
+                            Nombre des projets selon l'étape
+                        </p>
                     <div style={styles.chart}>
                         <BarChart projects={projets} columns={columns} />
                     </div>
                 </Col>
-                <Col md={4} className="p-2" style={styles.col}>
+                <Col md={3} className="p-2" style={styles.colMeteo}>
                     <p style={styles.title} className="m-2">
                         Méteo
                     </p>
@@ -79,17 +79,17 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                     </div>
                 </Col>
             </Row>
-            <Row  className="my-5 mx-3">
-                <Col md={7} className="p-2" style={styles.col}>
+            <Row className="my-5 mx-3">
+                <Col md={7} className="p-2" style={styles.colBudget}>
                     <p style={styles.title} className="m-2">
                         Budget par type d'activité
                     </p>
-                    <div style={{...styles.chart,marginLeft:"20px"}}>
+                    <div style={{ ...styles.chart, marginLeft: "20px" }}>
                         <BarChartBudget projects={projets}></BarChartBudget>
                     </div>
                 </Col>
 
-                <Col md={4} className="p-2" style={styles.col}>
+                <Col md={3} className="p-2" style={styles.colStatus}>
                     <p style={styles.title} className="m-2">
                         Status des projets
                     </p>
