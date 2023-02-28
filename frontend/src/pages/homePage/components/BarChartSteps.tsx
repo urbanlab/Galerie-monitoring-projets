@@ -1,5 +1,4 @@
 import { ResponsiveBar } from "@nivo/bar";
-
 import { Columns, Projet } from "../../../models";
 import { augmentSaturation } from "../../circlePackingPage/circlePackingDataFormat";
 
@@ -49,7 +48,7 @@ const colorMap: ColorMap = {
     sunny: augmentSaturation("#DDEDEA", 0.2, -0.15),
     cloudy: augmentSaturation("#FBF3DB", 0.4, -0.15),
     rainy: augmentSaturation("#FBE4E4", 0.4, -0.15),
-    undefined: "#ebebeb",
+    undefined: "#DEDEDE",
 };
 
 const BarChart = (props: Props) => {

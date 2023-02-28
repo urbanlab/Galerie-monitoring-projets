@@ -119,7 +119,6 @@ const App = () => {
             <BrowserRouter>
                 {/* === Navbar === */}
                 <NavBar isLoading={isLoading} nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange} />
-
                 {/* === Project Details Modal === */}
                 {selectedProject && (
                     <ProjectDetailsModal
@@ -133,7 +132,6 @@ const App = () => {
                 {/* === Routes === */}
                 <Routes>
                     {/* Route to / */}
-
                     <Route
                         path="/"
                         element={
