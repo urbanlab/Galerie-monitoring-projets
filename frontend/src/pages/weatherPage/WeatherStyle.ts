@@ -4,14 +4,13 @@ const leftMargin = 60;
 const frame = {
     backgroundColor: "#ebebeb",
     boxShadow: "-1px 1px 3px 0px rgba(0,0,0,0.3)",
-}
+};
 
 export const styles: any = {
     menuContainer: {
         display: "flex",
         alignItems: "stretch",
         marginLeft: leftMargin,
-        fontFamily: "Montserrat, sans-serif",
     },
     frame: frame,
     filtersContainer: {
@@ -68,6 +67,5 @@ export const styles: any = {
         marginLeft: leftMargin,
 
         alignItems: "flex-end",
-
-    }
+    },
 };

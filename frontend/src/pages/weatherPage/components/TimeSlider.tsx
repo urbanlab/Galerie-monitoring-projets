@@ -14,12 +14,11 @@ export function TimeSlider(props: Props) {
     const formatLabel = (value: number) => {
         let date = new Date(allProjectsHistory.listOfDates[value]);
 
-        return date.toLocaleDateString('fr');
-    }
+        return date.toLocaleDateString("fr");
+    };
 
     const muiTheme: any = createTheme({
-        components:
-        {
+        components: {
             MuiSlider: {
                 styleOverrides: {
                     root: {
@@ -47,7 +46,6 @@ export function TimeSlider(props: Props) {
                         backgroundColor: "white",
                         boxShadow: "-1px 1px 3px 0px rgba(0,0,0,0.3)",
                         fontSize: 14,
-                        fontFamily: "Montserrat, sans-serif",
                         fontWeight: 600,
                     },
                     rail: {
@@ -57,17 +55,14 @@ export function TimeSlider(props: Props) {
                     markLabel: {
                         color: "#404040",
                         fontSize: 14,
-                        fontFamily: "Montserrat, sans-serif",
                         fontWeight: 600,
                     },
                     mark: {
                         height: 0,
-                    }
-
+                    },
                 },
             },
-
-        }
+        },
     });
 
     const marks = [
@@ -81,30 +76,27 @@ export function TimeSlider(props: Props) {
         },
     ];
 
-
-
-
     return (
-        <Box sx={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'flex-end',
-            padding: '50px 50px 10px 50px',
-
-        }}>
+        <Box
+            sx={{
+                width: "100%",
+                display: "flex",
+                alignItems: "flex-end",
+                padding: "50px 50px 10px 50px",
+            }}
+        >
             <ThemeProvider theme={muiTheme}>
                 <Slider
                     onChange={(event, value: any) => {
                         onChange(allProjectsHistory.listOfDates[value]);
                     }}
                     defaultValue={allProjectsHistory.listOfDates.length - 1}
-                    color='primary'
+                    color="primary"
                     valueLabelDisplay="on"
                     valueLabelFormat={formatLabel}
                     min={0}
                     max={allProjectsHistory.listOfDates.length - 1}
                     marks={marks}
-
                 />
             </ThemeProvider>
         </Box>

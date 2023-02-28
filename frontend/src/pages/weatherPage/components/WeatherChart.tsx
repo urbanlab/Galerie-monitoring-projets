@@ -28,7 +28,7 @@ export const WeatherChart = (props: Props) => {
     const svgRef = useRef(null);
     const isDraggable = mode === "edition";
 
-    const buildChart = (chartDimensions: { width: number, height: number }) => {
+    const buildChart = (chartDimensions: { width: number; height: number }) => {
         const svg = d3
             .select(svgRef.current)
             .attr("width", chartDimensions.width)
@@ -63,7 +63,7 @@ export const WeatherChart = (props: Props) => {
                 .padding(etapesConfig.padding);
 
             const xAxis = d3.axisBottom(xScale).ticks(etapesConfig.domain.length);
-            console.log(xScale.step())
+            console.log(xScale.step());
             svg.append("g")
                 .call(xAxis)
                 .attr("class", "xAxis")
@@ -73,7 +73,6 @@ export const WeatherChart = (props: Props) => {
                 .style("user-select", "none")
                 .style("text-anchor", "center")
                 .style("font-size", 14)
-                .style("font-family", "Montserrat, Sans-Serif")
                 .style("font-weight", "700")
                 .call(wrap, xScale.step());
 
@@ -99,7 +98,6 @@ export const WeatherChart = (props: Props) => {
                         line.push(word);
                         tspan.text(line.join(" "));
                         if (tspan.node()!.getComputedTextLength() > width) {
-
                             line.pop();
                             tspan.text(line.join(" ").replace(/-/, ""));
                             line = [word];
@@ -113,8 +111,6 @@ export const WeatherChart = (props: Props) => {
                     }
                 });
             }
-
-
         };
 
         const buildYAxis = () => {
@@ -177,11 +173,11 @@ export const WeatherChart = (props: Props) => {
     };
 
     function handleResize() {
-        let height = window.innerHeight - menuRef.current?.clientHeight - 150
+        let height = window.innerHeight - menuRef.current?.clientHeight - 150;
         if (mode == "evolution") {
-            height = height - sliderRef.current?.clientHeight
+            height = height - sliderRef.current?.clientHeight;
         }
-        let width = menuRef.current?.clientWidth
+        let width = menuRef.current?.clientWidth;
         var newChartDimensions = {
             width: width,
             height: height,
@@ -191,9 +187,8 @@ export const WeatherChart = (props: Props) => {
     }
 
     useEffect(() => {
-        handleResize()
+        handleResize();
         window.addEventListener("resize", () => handleResize());
-
     }, [columns, mode]);
 
     function handlePointerMove(e: React.PointerEvent<SVGElement>) {
@@ -276,12 +271,11 @@ export const WeatherChart = (props: Props) => {
                 width={chartDimensions.width}
                 height={chartDimensions.height}
                 viewBox={`-${styles.leftMargin} 0 ${chartDimensions.width} ${chartDimensions.height}`}
-                overflow="visible">
+                overflow="visible"
+            >
                 <svg ref={svgRef}></svg>
                 {rectElements}
-
             </svg>
-
         </svg>
     );
 };
