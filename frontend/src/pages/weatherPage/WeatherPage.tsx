@@ -30,9 +30,7 @@ export const WeatherPage = (props: Props) => {
     const chartProjects = allProjects.filter(
         (project) =>
             project.meteo_precise != null &&
-            project.etape_precise != null //&&
-        // project.etat != null &&
-        // (project.etat.text.includes("En cours") || project.etat.text.includes("En attente")),
+            project.etape_precise != null
     );
 
     async function updateProject(projectId: string) {
@@ -132,7 +130,10 @@ export const WeatherPage = (props: Props) => {
     const startAnimation = AnimateElements(setElements);
     const setElementAtThisDate = (date: string) => {
         var endElements: DragElement[] = [];
-        for (var project of allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date)) {
+        //si c'est la date du jour, on affiche les mêmes projets que dans le mode édition pour pas refaire une requete pour mettre à jour allProjectsHistory
+        var projectsList = date == new Date().toISOString().slice(0, 10) ? chartProjects : allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date)
+
+        for (var project of projectsList) {
             if (isProjectVisible(project)) {
                 endElements.push({
                     xNorm: project.etape_precise ?? 0,
