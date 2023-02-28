@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Columns, ProjectHistory, Projet } from "../../models";
 import { privateQuery } from "../../services";
-import { useAnimateValue } from "./components/AnimateElements";
+import { AnimateElements } from "./components/AnimateElements";
 import { TimeSlider } from "./components/TimeSlider";
 import { WeatherChart } from "./components/WeatherChart";
 import { WeatherMenu } from "./components/WeatherMenu";
@@ -30,9 +30,7 @@ export const WeatherPage = (props: Props) => {
     const chartProjects = allProjects.filter(
         (project) =>
             project.meteo_precise != null &&
-            project.etape_precise != null &&
-            project.etat != null &&
-            (project.etat.text.includes("En cours") || project.etat.text.includes("En attente")),
+            project.etape_precise != null
     );
 
     async function updateProject(projectId: string) {
@@ -42,7 +40,6 @@ export const WeatherPage = (props: Props) => {
                     project.id === updatedProject.id ? updatedProject : project,
                 );
                 setAllProjects(newProjects);
-                console.log("set all projects");
             })
             .catch((err: any) => {
                 console.log(err);
@@ -84,48 +81,39 @@ export const WeatherPage = (props: Props) => {
             });
     }
 
-    const applyFilters = (elements: DragElement[], filters: Filters) => {
-        setElements(
-            elements.map((item) => {
-                let isVisible = true;
-                if (
-                    filters.directeurProjet !== "all" &&
-                    !item.project.directeur_projet?.map((directeur) => directeur.name).includes(filters.directeurProjet)
-                ) {
-                    isVisible = false;
-                }
-                if (
-                    filters.referentsProjet !== "all" &&
-                    !item.project.chef_de_projet_ou_referent
-                        ?.map((referent) => referent.name)
-                        .includes(filters.referentsProjet)
-                ) {
-                    isVisible = false;
-                }
-                if (
-                    filters.politiquesPubliques !== "all" &&
-                    !item.project.politiques_publiques
-                        ?.map((politique_publique) => politique_publique.text)
-                        .includes(filters.politiquesPubliques)
-                ) {
-                    isVisible = false;
-                }
-                if (filters.typeActivite !== "all" && item.project.type_activite?.text !== filters.typeActivite) {
-                    isVisible = false;
-                }
-                if (
-                    filters.besoinsLab !== "all" &&
-                    !item.project.besoins_lab?.map((besoinLab) => besoinLab.text).includes(filters.besoinsLab)
-                ) {
-                    isVisible = false;
-                }
-                return {
-                    ...item,
-                    isVisible: isVisible,
-                };
-            }),
-        );
-    };
+    const isProjectVisible = (project: Projet) => {
+        let isVisible = true;
+        if (
+            filters.directeurProjet !== "all" &&
+            !project.directeur_projet?.map((directeur) => directeur.name).includes(filters.directeurProjet)
+        ) {
+            isVisible = false;
+        }
+        if (
+            filters.referentsProjet !== "all" &&
+            !project.chef_de_projet_ou_referent
+                ?.map((referent) => referent.name)
+                .includes(filters.referentsProjet)
+        ) {
+            isVisible = false;
+        }
+        if (
+            filters.politiquesPubliques !== "all" &&
+            !project.politiques_publiques
+                ?.map((politique_publique) => politique_publique.text)
+                .includes(filters.politiquesPubliques)
+        ) {
+            isVisible = false;
+        }
+        if (filters.typeActivite !== "all" && project.type_activite?.text !== filters.typeActivite) {
+            isVisible = false;
+        }
+        if (
+            filters.etat !== "all" && project.etat?.text !== filters.etat) {
+            isVisible = false;
+        }
+        return isVisible
+    }
 
     function handleExport() {
         const svg = chartRef.current.querySelector("svg");
@@ -139,20 +127,22 @@ export const WeatherPage = (props: Props) => {
         document.body.removeChild(downloadLink);
     }
 
-    const startAnimation = useAnimateValue(setElements, filters, applyFilters, 150);
-
+    const startAnimation = AnimateElements(setElements);
     const setElementAtThisDate = (date: string) => {
-        var endElements: DragElement[] = allProjectsHistory
-            .getListOfProjectsAtThisDate(allProjects, date)
-            .map((project, index) => {
-                return {
+        var endElements: DragElement[] = [];
+        //si c'est la date du jour, on affiche les mêmes projets que dans le mode édition pour pas refaire une requete pour mettre à jour allProjectsHistory
+        var projectsList = date == new Date().toISOString().slice(0, 10) ? chartProjects : allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date)
+
+        for (var project of projectsList) {
+            if (isProjectVisible(project)) {
+                endElements.push({
                     xNorm: project.etape_precise ?? 0,
                     yNorm: 1 - (project.meteo_precise ?? 1),
                     project: project,
-                    isVisible: true,
-                };
-            });
-        startAnimation(elements, endElements);
+                });
+            }
+            startAnimation(elements, endElements);
+        }
     };
 
     useEffect(() => {
@@ -167,25 +157,26 @@ export const WeatherPage = (props: Props) => {
     //initialize elements
     useEffect(() => {
         if (filters.mode == "edition") {
-            var elements: DragElement[] = chartProjects.map((project, index) => {
-                return {
-                    xNorm: project.etape_precise ?? 0,
-                    yNorm: 1 - (project.meteo_precise ?? 1),
-                    xStart: 0,
-                    yStart: 0,
-                    offsetX: 0,
-                    offsetY: 0,
-                    active: false,
-                    project: project,
-                    isVisible: true,
-                };
-            });
-            setElements(elements);
-            applyFilters(elements, filters);
+            var newElements: DragElement[] = [];
+            for (var project of chartProjects) {
+                if (isProjectVisible(project)) {
+                    newElements.push({
+                        xNorm: project.etape_precise ?? 0,
+                        yNorm: 1 - (project.meteo_precise ?? 1),
+                        xStart: 0,
+                        yStart: 0,
+                        offsetX: 0,
+                        offsetY: 0,
+                        active: false,
+                        project: project,
+                    });
+                }
+            }
+            startAnimation(elements, newElements, 150);
         } else {
             setElementAtThisDate(selectedDate);
         }
-    }, [refresh, filters.mode]);
+    }, [refresh, filters]);
 
     const buildChart = () => {
         return (
@@ -207,16 +198,15 @@ export const WeatherPage = (props: Props) => {
         <div className="px-3 py-3">
             <WeatherMenu
                 menuRef={menuRef}
-                applyFilters={applyFilters}
                 setFilters={setFilters}
                 filters={filters}
-                elements={elements}
                 chartProjects={chartProjects}
                 columns={columns}
                 handleExport={handleExport}
                 menu={menu}
                 setMenu={setMenu}
             />
+
             {buildChart()}
             {filters.mode == "evolution" && (
                 <div className="d-flex" style={{ marginTop: 60, justifyContent: "center" }}>

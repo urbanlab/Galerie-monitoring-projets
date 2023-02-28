@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { DragElement, Filters } from "../weatherModels";
+import { DragElement } from "../weatherModels";
 
 export function animateElements(
     startElements: DragElement[],
@@ -21,6 +20,7 @@ export function animateElements(
                 ...startElement,
                 xNorm: xNorm,
                 yNorm: yNorm,
+                opacity: 1,
             };
             newElements.push(element);
         } else {
@@ -38,46 +38,33 @@ export function animateElements(
     setElements(newElements);
 }
 
-export function useAnimateValue(
-    setElements: (elements: DragElement[]) => void,
-    filters: Filters,
-    applyFilters: (elements: DragElement[], filters: Filters) => void,
-    duration: number,
-) {
-    const [value, setValue] = useState<any>(0);
-    const [isRunning, setIsRunning] = useState<any>(false);
-    const [startElements, setStartElements] = useState<DragElement[]>([]);
-    const [endElements, setEndElements] = useState<DragElement[]>([]);
+export const AnimateElements = (setElements: (elements: DragElement[]) => void,) => {
+    let request: number;
     const easing = (t: number) => -t * (t - 2);
 
-    useEffect(() => {
+    const startAnimation = (startElements: DragElement[], endElements: DragElement[], duration: number = 300) => {
         let start: any = null;
-        const animation = (timestamp: any) => {
+        const performAnimation = (timestamp: any) => {
             if (!start) start = timestamp;
             const progress = timestamp - start;
             const t = Math.min(progress / duration, 1);
-            const newValue = easing(t);
-
-            setValue(newValue);
-            animateElements(startElements, endElements, newValue, setElements);
-            if (progress < duration && isRunning) {
-                window.requestAnimationFrame(animation);
+            var value = easing(t);
+            animateElements(startElements, endElements, value, setElements);
+            if (progress < duration) {
+                request = window.requestAnimationFrame(performAnimation);
             } else {
-                setIsRunning(false);
-                applyFilters(endElements, filters);
+                stopAnimation(endElements);
             }
         };
-        if (isRunning) {
-            window.requestAnimationFrame(animation);
-        }
-    }, [isRunning]);
+        request = window.requestAnimationFrame(performAnimation);
+    }
+    const stopAnimation = (endElements: DragElement[]) => {
+        endElements = endElements.map((element) => {
+            return { ...element, opacity: 1 };
+        });
+        setElements(endElements)
+        window.cancelAnimationFrame(request);
+    }
 
-    const startAnimation = (startElements: DragElement[], endElements: DragElement[]) => {
-        setIsRunning(false);
-        setStartElements(startElements);
-        setEndElements(endElements);
-        setIsRunning(true);
-    };
-
-    return startAnimation;
+    return startAnimation
 }

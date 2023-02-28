@@ -1,18 +1,17 @@
 import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { Button } from "react-bootstrap";
 import { Columns, Projet } from "../../../models";
-import { DragElement, Filters, MenuOptions } from "../weatherModels";
+import { Filters, MenuOptions } from "../weatherModels";
 import { styles } from "../WeatherStyle";
-import { Select } from "./Select";
+import { Select } from "./FilterSelect";
 
 interface Props {
     menu: string;
     chartProjects: Projet[];
     setMenu: (menu: string) => void;
     columns: Columns | undefined;
-    elements: DragElement[];
     menuRef: React.MutableRefObject<any>;
-    applyFilters: (elements: DragElement[], filters: Filters) => void;
+    //applyFilters: (elements: DragElement[], filters: Filters) => void;
     filters: Filters;
     setFilters: (filters: Filters) => void;
     handleExport: () => void;
@@ -23,10 +22,8 @@ export const WeatherMenu = (props: Props) => {
         menu,
         chartProjects,
         setMenu,
-        elements,
         menuRef,
         columns,
-        applyFilters,
         filters,
         setFilters,
         handleExport,
@@ -75,7 +72,7 @@ export const WeatherMenu = (props: Props) => {
                         value={filters.referentsProjet}
                         onChange={(value: string) => {
                             var newFilters = new Filters({ ...filters, referentsProjet: value });
-                            applyFilters(elements, newFilters);
+                            //applyFilters(elements, newFilters);
                             setFilters(newFilters);
                         }}
                     />
@@ -88,7 +85,7 @@ export const WeatherMenu = (props: Props) => {
                         value={filters.typeActivite}
                         onChange={(value: string) => {
                             var newFilters = new Filters({ ...filters, typeActivite: value });
-                            applyFilters(elements, newFilters);
+                            //applyFilters(elements, newFilters);
                             setFilters(newFilters);
                         }}
                     />
@@ -102,19 +99,19 @@ export const WeatherMenu = (props: Props) => {
                         value={filters.politiquesPubliques}
                         onChange={(value: string) => {
                             var newFilters = new Filters({ ...filters, politiquesPubliques: value });
-                            applyFilters(elements, newFilters);
+                            //applyFilters(elements, newFilters);
                             setFilters(newFilters);
                         }}
                     />
                 </div>
                 <div style={styles.singleFilterContainer}>
                     <Select
-                        title={"Besoins Lab"}
-                        options={columns?.besoins_lab.map((item) => item.text) ?? []}
-                        value={filters.besoinsLab}
+                        title={"Etat"}
+                        options={columns?.etats.map((etat) => etat.text) ?? []}
+                        value={filters.etat}
                         onChange={(value: string) => {
-                            var newFilters = new Filters({ ...filters, besoinsLab: value });
-                            applyFilters(elements, newFilters);
+                            var newFilters = new Filters({ ...filters, etat: value });
+                            //applyFilters(elements, newFilters);
                             setFilters(newFilters);
                         }}
                     />

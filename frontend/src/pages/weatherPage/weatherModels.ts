@@ -10,7 +10,6 @@ export interface DragElement {
     color?: string;
     project: Projet;
     active?: boolean;
-    isVisible: boolean;
     opacity?: number;
 }
 
@@ -28,21 +27,21 @@ export class Filters {
         typeActivite = "all",
         politiquesPubliques = "all",
         directeurProjet = "all",
-        besoinsLab = "all",
+        etat = "all",
         referentsProjet = "all",
         mode = "edition",
     }) {
         this.typeActivite = typeActivite;
         this.politiquesPubliques = politiquesPubliques;
         this.directeurProjet = directeurProjet;
-        this.besoinsLab = besoinsLab;
+        this.etat = etat;
         this.referentsProjet = referentsProjet;
         this.mode = mode;
     }
     typeActivite: string;
     politiquesPubliques: string;
     directeurProjet: string;
-    besoinsLab: string;
+    etat: string;
     referentsProjet: string;
     mode: string;
 }
@@ -108,7 +107,6 @@ export class AllProjectsHistory {
                 });
             }
         }
-        console.log("projectsAtThisDate", projectsAtThisDate);
         return projectsAtThisDate;
     }
 }
