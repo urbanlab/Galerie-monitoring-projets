@@ -25,6 +25,7 @@ export const WeatherPage = (props: Props) => {
     const [menu, setMenu] = useState<string>(MenuOptions.filter);
     const menuRef = useRef<any>(null);
     const chartRef = useRef<any>(null);
+    const sliderRef = useRef<any>(null);
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
 
     const chartProjects = allProjects.filter(
@@ -127,6 +128,7 @@ export const WeatherPage = (props: Props) => {
         document.body.removeChild(downloadLink);
     }
 
+
     const startAnimation = AnimateElements(setElements);
     const setElementAtThisDate = (date: string) => {
         var endElements: DragElement[] = [];
@@ -189,6 +191,7 @@ export const WeatherPage = (props: Props) => {
                     saveProject={saveProject}
                     mode={filters.mode}
                     menuRef={menuRef}
+                    sliderRef={sliderRef}
                 />
             </div>
         );
@@ -209,8 +212,11 @@ export const WeatherPage = (props: Props) => {
 
             {buildChart()}
             {filters.mode == "evolution" && (
-                <div className="d-flex" style={{ marginTop: 60, justifyContent: "center" }}>
-                    <TimeSlider allProjectsHistory={allProjectsHistory} onChange={setSelectedDate} />
+                <div className="d-flex" style={styles.sliderContainer} ref={sliderRef}>
+                    <TimeSlider
+                        allProjectsHistory={allProjectsHistory}
+                        onChange={setSelectedDate}
+                    />
                 </div>
             )}
         </div>

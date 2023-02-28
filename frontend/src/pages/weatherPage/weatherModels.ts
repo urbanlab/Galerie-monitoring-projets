@@ -13,15 +13,6 @@ export interface DragElement {
     opacity?: number;
 }
 
-export class ChartDimensions {
-    constructor({ windowWidth = 0, windowHeight = 0 }) {
-        this.width = windowWidth;
-        this.height = 0.6 * windowHeight;
-    }
-    width: number;
-    height: number;
-}
-
 export class Filters {
     constructor({
         typeActivite = "all",

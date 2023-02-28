@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { ChartDimensions, DragElement } from "../weatherModels";
+import { DragElement } from "../weatherModels";
 import { Fade } from "./Fade";
 
 interface Props {
     item: DragElement;
     index: number;
-    chartDimensions: ChartDimensions;
+    chartDimensions: { width: number, height: number };
     onShowDetails: (projectId: string) => void;
     handlePointerDown: (index1: number, e: React.PointerEvent<SVGElement>) => void;
 }
