@@ -79,7 +79,7 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                                 Méteo
                             </p>
                             <div style={styles.chart} className="m-auto">
-                                {meteoFormatted && <MeteoCircleChart meteo={meteoFormatted} />}
+                                {meteoFormatted && <MeteoCircleChart meteo={meteoFormatted} projects={projets} />}
                             </div>
                         </div>
                     </Col>

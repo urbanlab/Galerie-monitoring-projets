@@ -1,11 +1,13 @@
 // install (please make sure versions match peerDependencies)
 // yarn add @nivo/core @nivo/circle-packing
 
-import { ResponsiveCirclePacking } from "@nivo/circle-packing";
+import { ResponsiveCirclePacking, CirclePackingSvgProps } from "@nivo/circle-packing";
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { ColoredText, Projet } from "../../models";
 import getBgColorByName from "../../utils/colors";
+import { Modal } from "react-bootstrap";
+import ProjectsTable from "../projectsTablePage/ProjectsTable";
 import { augmentSaturation, formatData } from "./circlePackingDataFormat";
 
 interface Props {
@@ -22,6 +24,21 @@ export type DisplayedProperty = "politiques_publiques" | "direction_metier" | "e
 const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
     /* This component is a wrapper around the nivo circle packing component. It takes a list of projects and formats it to be displayed in a circle packing chart. */
     const [displayed_property, setDisplayedProperty] = useState<DisplayedProperty>("politiques_publiques");
+    let [selectedProjects, setSelectedProjects] = useState<Projet[]>([]);
+    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+    const [sortColumn, setSortColumn] = useState<keyof Projet>("id");
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+    const handleSort = (column: keyof Projet) => {
+        if (sortColumn === column) {
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+        } else {
+            setSortColumn(column);
+            setSortDirection("asc");
+        }
+    };
+    function showProjectDetails(projectId: string) {
+        setSelectedProjectId(projectId);
+    }
 
     /* =================== Color map =================== */
     const allPropertyValues = projets.reduce(
@@ -32,6 +49,27 @@ const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
         acc[pp.text] = augmentSaturation(getBgColorByName(pp.color), 0.4, -0.15);
         return acc;
     }, {});
+
+    const handleCircleClick: CirclePackingSvgProps<any>['onClick'] = (circle, event) => {
+        let projectsDemande: Projet[] = [];
+        if (displayed_property ==="politiques_publiques"){
+            projectsDemande = projets.filter((project) => project.politiques_publiques.map((e)=>e.text).includes(circle.id))
+            setSelectedProjects(projectsDemande)
+        }
+        if (displayed_property == "direction_metier"){
+            projectsDemande = projets.filter((project)=> project.direction_metier.map((e)=>e.text).includes(circle.id))
+            setSelectedProjects(projectsDemande);
+        }
+        if (displayed_property == "etape"){
+            projectsDemande = projets.filter((project)=> project.etape.map((e)=>e.text).includes(circle.id))
+            setSelectedProjects(projectsDemande);
+        }
+        if (displayed_property == "besoins_lab"){
+            projectsDemande = projets.filter((project)=> project.besoins_lab.map((e)=>e.text).includes(circle.id))
+            setSelectedProjects(projectsDemande);
+        }
+        
+    }
 
     /* =================== Render =================== */
     return (
@@ -62,6 +100,7 @@ const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
                     data={formatData(projets, displayed_property)}
                     margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                     id="name"
+                    onClick={handleCircleClick}
                     value="loc"
                     leavesOnly={true}
                     colors={function (e) {
@@ -116,6 +155,29 @@ const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
                     }
                     isInteractive={true}
                 />
+                {
+                    selectedProjects.length > 0 && (
+                        <div>
+                            <Modal show={!!selectedProjects} onHide={() => { setSelectedProjects([]) }} size="lg">
+                                <Modal.Header closeButton>
+                                    <Modal.Title>
+                                        Projects
+                                    </Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <ProjectsTable
+                                        projets={selectedProjects}
+                                        onShowDetails={showProjectDetails}
+                                        handleSort={handleSort}
+                                        sortDirection={sortDirection}
+                                        sortColumn={sortColumn}
+                                    />
+                                </Modal.Body>
+                            </Modal>
+
+                        </div>
+                    )
+                }
             </div>
         </div>
     );
