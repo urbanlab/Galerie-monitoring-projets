@@ -118,7 +118,8 @@ const App = () => {
         <div className="App">
             <BrowserRouter>
                 {/* === Navbar === */}
-                <NavBar isLoading={isLoading} nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange} />
+                <NavBar />
+
                 {/* === Project Details Modal === */}
                 {selectedProject && (
                     <ProjectDetailsModal
