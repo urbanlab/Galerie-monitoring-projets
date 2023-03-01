@@ -54,6 +54,9 @@ def parse_notion_page(page: Raw_Notion_Page) -> Projet:
         etape_precise=prop["Etape précise"]["number"],  # if prop["Etape précise"]["number"] else None,
         meteo=prop["Météo"]["select"]["name"] if prop["Météo"]["select"] else None,
         meteo_precise=prop["Météo précise"]["number"],  # if prop["Météo précise"]["number"] else None,
+        meteo_commentaire=prop["Commentaire météo"]["rich_text"][0]["plain_text"]
+        if prop["Commentaire météo"]["rich_text"]
+        else "",
         politiques_publiques=[
             colored_text(
                 text=prop["Politiques publiques"]["multi_select"][j]["name"],

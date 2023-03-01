@@ -14,11 +14,11 @@ const CustomBadge: React.FC<Props> = ({ coloredText }) => {
 
     return (
         <span
-            className="my-1 mx-1 w-auto"
+            className="mx-1 w-auto"
             style={{
                 backgroundColor: getBgColorByName(color),
                 padding: "0.05em 0.5em",
-                borderRadius: "0.25em",
+                borderRadius: "1em",
                 color: "#37352F",
                 whiteSpace: "nowrap",
             }}

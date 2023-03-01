@@ -122,13 +122,17 @@ const App = () => {
 
                 {/* === Project Details Modal === */}
                 {selectedProject && (
-                    <ProjectDetailsModal project={selectedProject} onClose={() => setSelectedProjectId(null)} />
+                    <ProjectDetailsModal
+                        project={selectedProject}
+                        onClose={() => setSelectedProjectId(null)}
+                        setAllProjects={setProjects}
+                        allProjects={projets}
+                    />
                 )}
 
                 {/* === Routes === */}
                 <Routes>
                     {/* Route to / */}
-
                     <Route
                         path="/"
                         element={
