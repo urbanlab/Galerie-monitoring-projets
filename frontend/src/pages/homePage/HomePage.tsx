@@ -13,12 +13,32 @@ interface Props {
     setIsLoading: (isLoading: boolean) => void;
 }
 
-const getProjectsByMeteo = (projets: Projet[], meteo: string) => {
+const getProjectsByMeteo = (projets: Projet[], meteo: string | null) => {
+    if (!meteo) return 0;
     return projets.filter((projet) => projet.meteo?.includes(meteo)).length;
+};
+
+const formatMeteo = (projets: Projet[]) => {
+    const meteos = projets.map((projet) => projet.meteo);
+    const meteoSet = new Set(meteos);
+    const meteoArray = (Array.from(meteoSet)).filter((w) => w !== null);
+    const meteoFormatted = {
+        name: "root",
+        children:
+            meteoArray?.map((meteo) => {
+                const count = getProjectsByMeteo(projets, meteo);
+                return {
+                    name: meteo,
+                    loc: count,
+                };
+            }) ?? [],
+    };
+    return meteoFormatted;
 };
 
 export const HomePage = ({ projets, setIsLoading }: Props) => {
     const [columns, setColumns] = useState<Columns>();
+    const [meteoFormatted, setMeteoFormatted] = useState<any>(formatMeteo(projets));
     const getWeatherType = (weather: string): string => {
         switch (weather) {
             case "☀️":
@@ -31,19 +51,6 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                 return "unknown";
         }
     };
-
-    const meteoFormatted = {
-        name: "root",
-        children:
-            columns?.meteos?.map((meteo) => {
-                const count = getProjectsByMeteo(projets, meteo);
-                return {
-                    name: getWeatherType(meteo),
-                    loc: count,
-                };
-            }) ?? [],
-    };
-
     async function getColumns() {
         setIsLoading(true);
         privateQuery("GET", `/columns_data`, null)
@@ -55,6 +62,10 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                 console.log(err);
             });
     }
+
+    useEffect(() => {
+        setMeteoFormatted(formatMeteo(projets));
+    }, [projets]);
 
     useEffect(() => {
         getColumns();
@@ -79,7 +90,7 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                                 Méteo
                             </p>
                             <div style={styles.chart} className="m-auto">
-                                {meteoFormatted && <MeteoCircleChart meteo={meteoFormatted} />}
+                                {<MeteoCircleChart meteo={meteoFormatted} />}
                             </div>
                         </div>
                     </Col>

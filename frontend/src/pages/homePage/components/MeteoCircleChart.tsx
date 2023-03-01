@@ -15,9 +15,9 @@ const MeteoCircleChart = ({ meteo /* see data tab */ }: Props) => {
     /* =================== Color map =================== */
 
     const colorMap: ColorMap = {
-        sunny: augmentSaturation("#DDEDEA", 0.2, -0.15),
-        cloudy: augmentSaturation("#FBF3DB", 0.4, -0.15),
-        rainy: augmentSaturation("#FBE4E4", 0.4, -0.15),
+        "☀️": augmentSaturation("#DDEDEA", 0.2, -0.15),
+        "⛅️": augmentSaturation("#FBF3DB", 0.4, -0.15),
+        "🌧": augmentSaturation("#FBE4E4", 0.4, -0.15),
         undefined: "#ebebeb",
     };
 
