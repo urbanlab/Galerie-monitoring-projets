@@ -15,7 +15,7 @@ const mockProjets: Projet[] = [
             { text: "Analyze data", color: "blue" },
         ],
         etape_precise: null,
-        meteo: "☀",
+        meteo: "☀️",
         meteo_precise: 0.8,
         meteo_commentaire: "Sunny with a chance of clouds",
         politiques_publiques: [

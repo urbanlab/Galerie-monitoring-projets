@@ -1,42 +1,22 @@
-import { ResponsiveCirclePacking, CirclePackingSvgProps } from "@nivo/circle-packing";
-import { augmentSaturation } from "../../circlePackingPage/circlePackingDataFormat";
+import { CirclePackingSvgProps, ResponsiveCirclePacking } from "@nivo/circle-packing";
 import { Projet } from "../../../models";
-import { Modal } from "react-bootstrap";
-import { useState } from "react";
-import ProjectsTable from "../../projectsTablePage/ProjectsTable";
+import { augmentSaturation } from "../../circlePackingPage/circlePackingDataFormat";
 
 interface Props {
     meteo: any;
-    projects: Projet[];
+    showProjectsTableModal: (title: string, filter: (projet: Projet) => boolean) => void;
 }
 
 export interface ColorMap {
     [key: string]: string;
 }
 
-const MeteoCircleChart = ({ meteo, projects /* see data tab */ }: Props) => {
-    /* This component is a wrapper around the nivo circle packing component. It takes a list of projects and formats it to be displayed in a circle packing chart. */
-    let [selectedProjects, setSelectedProjects] = useState<Projet[]>([]);
-    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-    const [sortColumn, setSortColumn] = useState<keyof Projet>("id");
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-    const handleSort = (column: keyof Projet) => {
-        if (sortColumn === column) {
-            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-        } else {
-            setSortColumn(column);
-            setSortDirection("asc");
-        }
-    };
-    function showProjectDetails(projectId: string) {
-        setSelectedProjectId(projectId);
-    }
+const MeteoCircleChart = ({ meteo, showProjectsTableModal }: Props) => {
     /* =================== Color map =================== */
-
     const colorMap: ColorMap = {
-        sunny: augmentSaturation("#DDEDEA", 0.2, -0.15),
-        cloudy: augmentSaturation("#FBF3DB", 0.4, -0.15),
-        rainy: augmentSaturation("#FBE4E4", 0.4, -0.15),
+        "☀️": augmentSaturation("#DDEDEA", 0.2, -0.15),
+        "⛅️": augmentSaturation("#FBF3DB", 0.4, -0.15),
+        "🌧": augmentSaturation("#FBE4E4", 0.4, -0.15),
         undefined: "#ebebeb",
     };
 
@@ -53,12 +33,9 @@ const MeteoCircleChart = ({ meteo, projects /* see data tab */ }: Props) => {
         }
     };
 
-
-    const handleCircleClick: CirclePackingSvgProps<any>['onClick'] = (circle, event) => {
-        let projectsDemande: Projet[] = [];
-        projectsDemande = projects.filter((project) => project.meteo == getWeatherType(circle.id))
-        setSelectedProjects(projectsDemande);
-    }
+    const handleCircleClick: CirclePackingSvgProps<any>["onClick"] = (circle, event) => {
+        showProjectsTableModal("Projets " + circle.id, (project) => project.meteo == circle.id);
+    };
 
     /* =================== Render =================== */
     return (
@@ -98,54 +75,8 @@ const MeteoCircleChart = ({ meteo, projects /* see data tab */ }: Props) => {
                         from: "color",
                         modifiers: [["darker", 0.5]],
                     }}
-                    defs={
-                        [
-                            // {
-                            //     id: 'lines',
-                            //     type: 'patternLines',
-                            //     background: 'none',
-                            //     color: 'inherit',
-                            //     rotation: -45,
-                            //     lineWidth: 5,
-                            //     spacing: 8
-                            // }
-                        ]
-                    }
-                    fill={
-                        [
-                            // {
-                            //     match: {
-                            //         depth: 1
-                            //     },
-                            //     id: 'lines'
-                            // }
-                        ]
-                    }
                     isInteractive={true}
                 />
-                {
-                    selectedProjects.length > 0 && (
-                        <div>
-                            <Modal show={!!selectedProjects} onHide={() => { setSelectedProjects([]) }} size="lg">
-                                <Modal.Header closeButton>
-                                    <Modal.Title>
-                                        {selectedProjects[0].meteo} projects
-                                    </Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                    <ProjectsTable
-                                        projets={selectedProjects}
-                                        onShowDetails={showProjectDetails}
-                                        handleSort={handleSort}
-                                        sortDirection={sortDirection}
-                                        sortColumn={sortColumn}
-                                    />
-                                </Modal.Body>
-                            </Modal>
-
-                        </div>
-                    )
-                }
             </div>
         </div>
     );

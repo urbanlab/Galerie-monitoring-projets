@@ -3,6 +3,7 @@ import React, { memo, useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import NavBar from "./components/Navbar";
+import ProjectsTableModal from "./components/ProjectsTableModal";
 import mockProjets from "./mock-data";
 import { Projet } from "./models";
 import MyResponsiveCirclePacking from "./pages/circlePackingPage/CirclePackingPage";
@@ -42,7 +43,10 @@ function OnlyPublicRoute({ children }: any) {
 
 const App = () => {
     const { token, setToken } = useToken();
+    const [projectDetailsIsOpen, setProjectDetailsIsOpen] = useState<boolean>(false);
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+    const [selectedProjects, setSelectedProjects] = useState<Projet[]>([]);
+    const [ProjectsTableModalTitle, setProjectsTableModalTitle] = useState<string>("");
     const [projets, setProjects] = useState<Projet[]>(mockProjets);
     const [nameFilter, setNameFilter] = useState("");
     const [sortColumn, setSortColumn] = useState<keyof Projet>("id");
@@ -94,9 +98,16 @@ const App = () => {
     /* =================== Show project details =================== */
     function showProjectDetails(projectId: string) {
         setSelectedProjectId(projectId);
+        setProjectDetailsIsOpen(true);
     }
 
     const selectedProject = selectedProjectId ? projets.find((projet) => projet.id === selectedProjectId) : undefined;
+
+    /* =================== Project table modal =================== */
+    function showProjectsTableModal(title: string, filter: (projet: Projet) => boolean) {
+        setProjectsTableModalTitle(title);
+        setSelectedProjects(projets.filter(filter));
+    }
 
     /* =================== Filter projects =================== */
     const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,14 +130,26 @@ const App = () => {
             <BrowserRouter>
                 {/* === Navbar === */}
                 <NavBar />
-
                 {/* === Project Details Modal === */}
                 {selectedProject && (
                     <ProjectDetailsModal
                         project={selectedProject}
-                        onClose={() => setSelectedProjectId(null)}
+                        onClose={() => {
+                            setSelectedProjectId(null);
+                            setProjectDetailsIsOpen(false);
+                        }}
                         setAllProjects={setProjects}
                         allProjects={projets}
+                    />
+                )}
+                {/* === Project Table Modal === */}
+                {selectedProjects.length > 0 && (
+                    <ProjectsTableModal
+                        title={ProjectsTableModalTitle}
+                        projects={selectedProjects}
+                        onClose={() => setSelectedProjects([])}
+                        showProjectDetails={showProjectDetails}
+                        projectDetailsIsOpen={projectDetailsIsOpen}
                     />
                 )}
 
@@ -137,7 +160,11 @@ const App = () => {
                         path="/"
                         element={
                             <PrivateRoute>
-                                <HomePage projets={sortedProjects} setIsLoading={setIsLoading}></HomePage>
+                                <HomePage
+                                    projets={sortedProjects}
+                                    setIsLoading={setIsLoading}
+                                    showProjectsTableModal={showProjectsTableModal}
+                                ></HomePage>
                             </PrivateRoute>
                         }
                     />
@@ -147,13 +174,7 @@ const App = () => {
                         path="/table"
                         element={
                             <PrivateRoute>
-                                <ProjectsTable
-                                    projets={sortedProjects}
-                                    onShowDetails={showProjectDetails}
-                                    handleSort={handleSort}
-                                    sortDirection={sortDirection}
-                                    sortColumn={sortColumn}
-                                />
+                                <ProjectsTable projets={sortedProjects} onShowDetails={showProjectDetails} />
                             </PrivateRoute>
                         }
                     />
@@ -180,7 +201,10 @@ const App = () => {
                         element={
                             <PrivateRoute>
                                 <div className="d-flex justify-content-center mt-5 m-auto">
-                                    <MyResponsiveCirclePacking projets={projets} />
+                                    <MyResponsiveCirclePacking
+                                        projets={projets}
+                                        showProjectsTableModal={showProjectsTableModal}
+                                    />
                                 </div>
                             </PrivateRoute>
                         }

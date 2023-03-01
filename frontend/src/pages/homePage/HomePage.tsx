@@ -11,14 +11,35 @@ import { styles } from "./HomeStyle";
 interface Props {
     projets: Projet[];
     setIsLoading: (isLoading: boolean) => void;
+    showProjectsTableModal: (title: string, filter: (projet: Projet) => boolean) => void;
 }
 
-const getProjectsByMeteo = (projets: Projet[], meteo: string) => {
+const getProjectsByMeteo = (projets: Projet[], meteo: string | null) => {
+    if (!meteo) return 0;
     return projets.filter((projet) => projet.meteo?.includes(meteo)).length;
 };
 
-export const HomePage = ({ projets, setIsLoading }: Props) => {
+const formatMeteo = (projets: Projet[]) => {
+    const meteos = projets.map((projet) => projet.meteo);
+    const meteoSet = new Set(meteos);
+    const meteoArray = Array.from(meteoSet).filter((w) => w !== null);
+    const meteoFormatted = {
+        name: "root",
+        children:
+            meteoArray?.map((meteo) => {
+                const count = getProjectsByMeteo(projets, meteo);
+                return {
+                    name: meteo,
+                    loc: count,
+                };
+            }) ?? [],
+    };
+    return meteoFormatted;
+};
+
+export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Props) => {
     const [columns, setColumns] = useState<Columns>();
+    const [meteoFormatted, setMeteoFormatted] = useState<any>(formatMeteo(projets));
     const getWeatherType = (weather: string): string => {
         switch (weather) {
             case "☀️":
@@ -30,18 +51,6 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
             default:
                 return "unknown";
         }
-    };
-
-    const meteoFormatted = {
-        name: "root",
-        children:
-            columns?.meteos?.map((meteo) => {
-                const count = getProjectsByMeteo(projets, meteo);
-                return {
-                    name: getWeatherType(meteo),
-                    loc: count,
-                };
-            }) ?? [],
     };
 
     async function getColumns() {
@@ -57,6 +66,10 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
     }
 
     useEffect(() => {
+        setMeteoFormatted(formatMeteo(projets));
+    }, [projets]);
+
+    useEffect(() => {
         getColumns();
     }, []);
     return (
@@ -69,7 +82,11 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                                 Nombre des projets selon l'étape
                             </p>
                             <div style={styles.chart} className="p-3">
-                                <BarChart projects={projets} columns={columns} />
+                                <BarChart
+                                    projects={projets}
+                                    columns={columns}
+                                    showProjectsTableModal={showProjectsTableModal}
+                                />
                             </div>
                         </div>
                     </Col>
@@ -79,7 +96,10 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                                 Méteo
                             </p>
                             <div style={styles.chart} className="m-auto">
-                                {meteoFormatted && <MeteoCircleChart meteo={meteoFormatted} projects={projets} />}
+                                <MeteoCircleChart
+                                    meteo={meteoFormatted}
+                                    showProjectsTableModal={showProjectsTableModal}
+                                />
                             </div>
                         </div>
                     </Col>
@@ -102,7 +122,11 @@ export const HomePage = ({ projets, setIsLoading }: Props) => {
                                 Status des projets
                             </p>
                             <div style={styles.chart} className="m-auto">
-                                <PieChart projects={projets} columns={columns} />
+                                <PieChart
+                                    projects={projets}
+                                    columns={columns}
+                                    showProjectsTableModal={showProjectsTableModal}
+                                />
                             </div>
                         </div>
                     </Col>

@@ -1,39 +1,21 @@
-import { ResponsivePie, PieSvgProps } from "@nivo/pie";
+import { PieSvgProps, ResponsivePie } from "@nivo/pie";
 import { Columns, Projet } from "../../../models";
 import { augmentSaturation } from "../../circlePackingPage/circlePackingDataFormat";
-import { ColorMap } from "./MeteoCircleChart";
-import { Modal } from "react-bootstrap";
-import { useState } from "react";
-import ProjectsTable from "../../projectsTablePage/ProjectsTable";
 import { styles } from "../HomeStyle";
+import { ColorMap } from "./MeteoCircleChart";
 
 interface Props {
     projects: Projet[];
     columns?: Columns;
+    showProjectsTableModal: (title: string, filter: (projet: Projet) => boolean) => void;
 }
 
 export const PieChart = (props: Props) => {
-    const { projects, columns } = props;
-    let [selectedProjects, setSelectedProjects] = useState<Projet[]>([]);
-    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-    const [sortColumn, setSortColumn] = useState<keyof Projet>("id");
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-    const handleSort = (column: keyof Projet) => {
-        if (sortColumn === column) {
-            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-        } else {
-            setSortColumn(column);
-            setSortDirection("asc");
-        }
+    const { projects, columns, showProjectsTableModal } = props;
+
+    const handlePieClick: PieSvgProps<any>["onClick"] = (pie, event) => {
+        showProjectsTableModal(pie.data.id, (projet) => projet.etat?.text === pie.data.id);
     };
-    function showProjectDetails(projectId: string) {
-        setSelectedProjectId(projectId);
-    }
-    const handlePieClick: PieSvgProps<any>['onClick'] = (pie, event) => {
-        let projectsDemande: Projet[] = [];
-        projectsDemande = projects.filter((project) => project.etat?.text == pie.id)
-        setSelectedProjects(projectsDemande);
-    }
 
     const data =
         columns?.etats
@@ -89,32 +71,7 @@ export const PieChart = (props: Props) => {
                     from: "color",
                     modifiers: [["darker", 2]],
                 }}
-
             />
-            {
-                selectedProjects.length > 0 && (
-                    <div>
-                        <Modal show={!!selectedProjects} onHide={() => { setSelectedProjects([]) }} size="lg">
-                            <Modal.Header closeButton>
-                                <Modal.Title>
-                                    {selectedProjects[0].etat?.text} projects
-                                </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <ProjectsTable
-                                    projets={selectedProjects}
-                                    onShowDetails={showProjectDetails}
-                                    handleSort={handleSort}
-                                    sortDirection={sortDirection}
-                                    sortColumn={sortColumn}
-                                />
-                            </Modal.Body>
-                        </Modal>
-
-                    </div>
-                )
-            }
         </div>
-
     );
 };
