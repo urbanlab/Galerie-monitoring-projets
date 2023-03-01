@@ -1,24 +1,40 @@
-import { ResponsiveCirclePacking } from "@nivo/circle-packing";
+import { CirclePackingSvgProps, ResponsiveCirclePacking } from "@nivo/circle-packing";
+import { Projet } from "../../../models";
 import { augmentSaturation } from "../../circlePackingPage/circlePackingDataFormat";
 
 interface Props {
     meteo: any;
+    showProjectsTableModal: (title: string, filter: (projet: Projet) => boolean) => void;
 }
 
 export interface ColorMap {
     [key: string]: string;
 }
 
-const MeteoCircleChart = ({ meteo /* see data tab */ }: Props) => {
-    /* This component is a wrapper around the nivo circle packing component. It takes a list of projects and formats it to be displayed in a circle packing chart. */
-
+const MeteoCircleChart = ({ meteo, showProjectsTableModal }: Props) => {
     /* =================== Color map =================== */
-
     const colorMap: ColorMap = {
-        sunny: augmentSaturation("#DDEDEA", 0.2, -0.15),
-        cloudy: augmentSaturation("#FBF3DB", 0.4, -0.15),
-        rainy: augmentSaturation("#FBE4E4", 0.4, -0.15),
+        "☀️": augmentSaturation("#DDEDEA", 0.2, -0.15),
+        "⛅️": augmentSaturation("#FBF3DB", 0.4, -0.15),
+        "🌧": augmentSaturation("#FBE4E4", 0.4, -0.15),
         undefined: "#ebebeb",
+    };
+
+    const getWeatherType = (weather: string): string => {
+        switch (weather) {
+            case "sunny":
+                return "☀️";
+            case "cloudy":
+                return "⛅️";
+            case "rainy":
+                return "🌧";
+            default:
+                return "unknown";
+        }
+    };
+
+    const handleCircleClick: CirclePackingSvgProps<any>["onClick"] = (circle, event) => {
+        showProjectsTableModal("Projets " + circle.id, (project) => project.meteo == circle.id);
     };
 
     /* =================== Render =================== */
@@ -28,6 +44,7 @@ const MeteoCircleChart = ({ meteo /* see data tab */ }: Props) => {
                 <ResponsiveCirclePacking
                     data={meteo}
                     margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                    onClick={handleCircleClick}
                     id="name"
                     value="loc"
                     leavesOnly={true}
@@ -58,29 +75,6 @@ const MeteoCircleChart = ({ meteo /* see data tab */ }: Props) => {
                         from: "color",
                         modifiers: [["darker", 0.5]],
                     }}
-                    defs={
-                        [
-                            // {
-                            //     id: 'lines',
-                            //     type: 'patternLines',
-                            //     background: 'none',
-                            //     color: 'inherit',
-                            //     rotation: -45,
-                            //     lineWidth: 5,
-                            //     spacing: 8
-                            // }
-                        ]
-                    }
-                    fill={
-                        [
-                            // {
-                            //     match: {
-                            //         depth: 1
-                            //     },
-                            //     id: 'lines'
-                            // }
-                        ]
-                    }
                     isInteractive={true}
                 />
             </div>

@@ -48,7 +48,6 @@ const ProjectDetailsModal: React.FC<Props> = ({ project, onClose, setAllProjects
                     project.id === updatedProject.id ? updatedProject : project,
                 );
                 setAllProjects(newProjects);
-                console.log("set all projects");
             })
             .catch((err: any) => {
                 console.log(err);
@@ -169,45 +168,49 @@ const ProjectDetailsModal: React.FC<Props> = ({ project, onClose, setAllProjects
                         {/* ================== RIGHT COLUMN ================== */}
                         <Col lg={5} sm={12}>
                             {/* =============== METEO DU PROJET =============== */}
-                            <Stack className="col-md-12 mx-auto text-center mt-3 mb-5">
-                                <p className="display-2">{project.meteo}</p>
-                                {project.meteo_precise && (
-                                    <div className="d-flex justify-content-center align-items-center mt-3">
-                                        <ProgressBar
-                                            className="col-md-3"
-                                            variant={
-                                                project.meteo_precise * 100 < 33
-                                                    ? "danger"
-                                                    : project.meteo_precise * 100 < 66
-                                                    ? "warning"
-                                                    : "success"
-                                            }
-                                            now={project.meteo_precise * 100}
-                                            // label={`${(project.meteo_precise * 100).toFixed(0)}%`}
-                                        />
-                                        <div className="ms-1 "> {(project.meteo_precise * 100).toFixed(0)}%</div>
-                                    </div>
-                                )}
-                            </Stack>
+                            {project.meteo && (
+                                <Stack className="col-md-12 mx-auto text-center mt-3 mb-3">
+                                    <p className="display-2 mb-0">{project.meteo}</p>
+                                    {project.meteo_precise && (
+                                        <div className="d-flex justify-content-center align-items-center mt-1">
+                                            <ProgressBar
+                                                className="col-md-3"
+                                                variant={
+                                                    project.meteo_precise * 100 < 33
+                                                        ? "danger"
+                                                        : project.meteo_precise * 100 < 66
+                                                        ? "warning"
+                                                        : "success"
+                                                }
+                                                now={project.meteo_precise * 100}
+                                                // label={`${(project.meteo_precise * 100).toFixed(0)}%`}
+                                            />
+                                            <div className="ms-1 "> {(project.meteo_precise * 100).toFixed(0)}%</div>
+                                        </div>
+                                    )}
+                                </Stack>
+                            )}
 
                             {/* =============== COMMENTAIRE METEO =============== */}
-                            <MeteoCommentaire
-                                project_id={project.id}
-                                commentaire={project.meteo_commentaire}
-                                updateProjects={updateProject}
-                            />
-
-                            {/* =============== TYPE ACTIVITE =============== */}
-                            {project.type_activite && (
-                                <div className="d-flex justify-content-end fs-5 mb-1">
-                                    <CustomBadge coloredText={project.type_activite} key="type_activite" />
-                                </div>
+                            {project.meteo && (
+                                <MeteoCommentaire
+                                    project_id={project.id}
+                                    commentaire={project.meteo_commentaire}
+                                    updateProjects={updateProject}
+                                />
                             )}
 
                             {/* =============== ETAT PROJET =============== */}
                             {project.etat && (
                                 <div className="d-flex justify-content-end fs-5 mb-1">
                                     <CustomBadge coloredText={project.etat} key="etat_projet" />
+                                </div>
+                            )}
+
+                            {/* =============== TYPE ACTIVITE =============== */}
+                            {project.type_activite && (
+                                <div className="d-flex justify-content-end fs-6 mb-1">
+                                    <CustomBadge coloredText={project.type_activite} key="type_activite" />
                                 </div>
                             )}
 
@@ -234,7 +237,7 @@ const ProjectDetailsModal: React.FC<Props> = ({ project, onClose, setAllProjects
                             )}
 
                             {/* =============== Besoins lab =============== */}
-                            {project.besoins_lab && (
+                            {project.besoins_lab.length > 0 && (
                                 <>
                                     <DisplaySimpleProperty property_name="Besoins lab" property_value={""} />
                                     {project.besoins_lab.map((besoin) => (

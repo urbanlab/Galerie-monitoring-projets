@@ -1,7 +1,7 @@
 // install (please make sure versions match peerDependencies)
 // yarn add @nivo/core @nivo/circle-packing
 
-import { ResponsiveCirclePacking } from "@nivo/circle-packing";
+import { CirclePackingSvgProps, ResponsiveCirclePacking } from "@nivo/circle-packing";
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { ColoredText, Projet } from "../../models";
@@ -10,6 +10,7 @@ import { augmentSaturation, formatData } from "./circlePackingDataFormat";
 
 interface Props {
     projets: Projet[];
+    showProjectsTableModal: (title: string, filter: (projet: Projet) => boolean) => void;
 }
 
 interface ColorMap {
@@ -19,7 +20,7 @@ interface ColorMap {
 // hardcoded possible values for the displayed_property
 export type DisplayedProperty = "politiques_publiques" | "direction_metier" | "etape" | "besoins_lab";
 
-const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
+const MyResponsiveCirclePacking = ({ projets, showProjectsTableModal }: Props) => {
     /* This component is a wrapper around the nivo circle packing component. It takes a list of projects and formats it to be displayed in a circle packing chart. */
     const [displayed_property, setDisplayedProperty] = useState<DisplayedProperty>("politiques_publiques");
 
@@ -32,6 +33,12 @@ const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
         acc[pp.text] = augmentSaturation(getBgColorByName(pp.color), 0.4, -0.15);
         return acc;
     }, {});
+
+    const handleCircleClick: CirclePackingSvgProps<any>["onClick"] = (circle, event) => {
+        showProjectsTableModal(circle.id, (projet) => {
+            return projet[displayed_property].map((e) => e.text).includes(circle.id);
+        });
+    };
 
     /* =================== Render =================== */
     return (
@@ -62,6 +69,7 @@ const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
                     data={formatData(projets, displayed_property)}
                     margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                     id="name"
+                    onClick={handleCircleClick}
                     value="loc"
                     leavesOnly={true}
                     colors={function (e) {
@@ -91,29 +99,6 @@ const MyResponsiveCirclePacking = ({ projets /* see data tab */ }: Props) => {
                         from: "color",
                         modifiers: [["darker", 0.5]],
                     }}
-                    defs={
-                        [
-                            // {
-                            //     id: 'lines',
-                            //     type: 'patternLines',
-                            //     background: 'none',
-                            //     color: 'inherit',
-                            //     rotation: -45,
-                            //     lineWidth: 5,
-                            //     spacing: 8
-                            // }
-                        ]
-                    }
-                    fill={
-                        [
-                            // {
-                            //     match: {
-                            //         depth: 1
-                            //     },
-                            //     id: 'lines'
-                            // }
-                        ]
-                    }
                     isInteractive={true}
                 />
             </div>

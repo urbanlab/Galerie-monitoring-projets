@@ -20,7 +20,6 @@ const CustomBadge: React.FC<Props> = ({ coloredText }) => {
                 padding: "0.05em 0.5em",
                 borderRadius: "1em",
                 color: "#37352F",
-                whiteSpace: "nowrap",
             }}
             key={text}
         >
