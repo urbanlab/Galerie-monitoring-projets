@@ -17,24 +17,53 @@ export class Filters {
     constructor({
         typeActivite = "all",
         politiquesPubliques = "all",
-        directeurProjet = "all",
         etat = "all",
-        referentsProjet = "all",
-        mode = "edition",
+        directeurOuReferentsProjet = "all",
+        mode = MenuMode.EDITION as string,
     }) {
         this.typeActivite = typeActivite;
         this.politiquesPubliques = politiquesPubliques;
-        this.directeurProjet = directeurProjet;
         this.etat = etat;
-        this.referentsProjet = referentsProjet;
+        this.directeurOuReferentsProjet = directeurOuReferentsProjet;
         this.mode = mode;
     }
     typeActivite: string;
     politiquesPubliques: string;
-    directeurProjet: string;
+    directeurOuReferentsProjet: string;
     etat: string;
-    referentsProjet: string;
     mode: string;
+
+    isProjectVisible = (project: Projet) => {
+        let isVisible = true;
+
+        if (
+            this.directeurOuReferentsProjet !== "all" &&
+            !(project.chef_de_projet_ou_referent
+                ?.map((referent) => referent.name)
+                .includes(this.directeurOuReferentsProjet)
+                || project.directeur_projet
+                    ?.map((directeur) => directeur.name)
+                    .includes(this.directeurOuReferentsProjet))
+        ) {
+            isVisible = false;
+        }
+        if (
+            this.politiquesPubliques !== "all" &&
+            !project.politiques_publiques
+                ?.map((politique_publique) => politique_publique.text)
+                .includes(this.politiquesPubliques)
+        ) {
+            isVisible = false;
+        }
+        if (this.typeActivite !== "all" && project.type_activite?.text !== this.typeActivite) {
+            isVisible = false;
+        }
+        if (
+            this.etat !== "all" && project.etat?.text !== this.etat) {
+            isVisible = false;
+        }
+        return isVisible
+    }
 }
 
 export class AllProjectsHistory {
@@ -103,7 +132,12 @@ export class AllProjectsHistory {
 }
 
 export enum MenuOptions {
-    filter = "FILTRER",
-    export = "EXPORTER",
-    mode = "MODE",
+    FILTER = "FILTRER",
+    EXPORT = "EXPORTER",
+    MODE = "MODE",
+}
+
+export enum MenuMode {
+    EDITION = "EDITION",
+    EVOLUTION = "EVOLUTION",
 }

@@ -1,7 +1,7 @@
 import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { Button } from "react-bootstrap";
 import { Columns, Projet } from "../../../models";
-import { Filters, MenuOptions } from "../weatherModels";
+import { Filters, MenuMode, MenuOptions } from "../weatherModels";
 import { styles } from "../WeatherStyle";
 import { Select } from "./FilterSelect";
 
@@ -50,16 +50,21 @@ export const WeatherMenu = (props: Props) => {
         );
     };
 
-    const getReferentsProjets = () => {
-        var referents: string[] = [];
+    const getDirecteursEtReferentsProjets = () => {
+        var directeursEtReferents: string[] = [];
         for (var project of chartProjects) {
             for (var referent of project.chef_de_projet_ou_referent) {
-                if (!referents.includes(referent.name)) {
-                    referents.push(referent.name);
+                if (!directeursEtReferents.includes(referent.name)) {
+                    directeursEtReferents.push(referent.name);
+                }
+            }
+            for (var directeur of project.directeur_projet) {
+                if (!directeursEtReferents.includes(directeur.name)) {
+                    directeursEtReferents.push(directeur.name);
                 }
             }
         }
-        return referents;
+        return directeursEtReferents;
     };
 
     const buildFilters = () => {
@@ -67,11 +72,11 @@ export const WeatherMenu = (props: Props) => {
             <>
                 <div style={styles.singleFilterContainer}>
                     <Select
-                        title={"Référents Projet"}
-                        options={getReferentsProjets()}
-                        value={filters.referentsProjet}
+                        title={"Directeur ou Référent Projet"}
+                        options={getDirecteursEtReferentsProjets()}
+                        value={filters.directeurOuReferentsProjet}
                         onChange={(value: string) => {
-                            var newFilters = new Filters({ ...filters, referentsProjet: value });
+                            var newFilters = new Filters({ ...filters, directeurOuReferentsProjet: value });
                             //applyFilters(elements, newFilters);
                             setFilters(newFilters);
                         }}
@@ -141,8 +146,8 @@ export const WeatherMenu = (props: Props) => {
                             setFilters(new Filters({ ...filters, mode: event.target.value }));
                         }}
                     >
-                        <FormControlLabel value="edition" control={<Radio />} label="Edition" />
-                        <FormControlLabel value="evolution" control={<Radio />} label="Evolution" />
+                        <FormControlLabel value={MenuMode.EDITION} control={<Radio />} label="Edition" />
+                        <FormControlLabel value={MenuMode.EVOLUTION} control={<Radio />} label="Evolution" />
                     </RadioGroup>
                 </FormControl>
             </div>
@@ -152,11 +157,11 @@ export const WeatherMenu = (props: Props) => {
     const buildMenu = () => {
         const content = () => {
             switch (menu) {
-                case MenuOptions.filter:
+                case MenuOptions.FILTER:
                     return buildFilters();
-                case MenuOptions.export:
+                case MenuOptions.EXPORT:
                     return buildExport();
-                case MenuOptions.mode:
+                case MenuOptions.MODE:
                     return buildMode();
                 default:
                     return <></>;
