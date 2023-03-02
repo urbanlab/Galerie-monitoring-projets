@@ -1,3 +1,4 @@
+import "@fontsource/montserrat";
 import { Buffer } from "buffer";
 import React, { memo, useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";

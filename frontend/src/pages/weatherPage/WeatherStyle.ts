@@ -1,36 +1,45 @@
 const spacing = "3px";
 const leftMargin = 60;
 
+const frame = {
+    backgroundColor: "#ebebeb",
+    boxShadow: "-1px 1px 3px 0px rgba(0,0,0,0.3)",
+};
+
 export const styles: any = {
+    menuContainer: {
+        display: "flex",
+        alignItems: "stretch",
+        marginLeft: leftMargin,
+    },
+    frame: frame,
     filtersContainer: {
+        ...frame,
         display: "flex",
         marginLeft: spacing,
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#ebebeb",
         padding: "0px 40px",
         height: "6em",
-        boxShadow: "-1px 1px 3px 0px rgba(0,0,0,0.3)",
     },
 
     singleFilterContainer: {
         display: "flex",
-        //flex:1,
     },
 
     button: {
         display: "flex",
         flex: 1,
         padding: "0px 40px",
-        //justifyContent: 'center',
         alignItems: "center",
         boxShadow: "-1px 1px 3px 0px rgba(0,0,0,0.3)",
     },
 
     selected: {
         color: "black",
+        fontWeight: 600,
         backgroundColor: "#ebebeb",
     },
     unselected: {
@@ -41,18 +50,22 @@ export const styles: any = {
         display: "flex",
         flexDirection: "column",
     },
-    menuContainer: {
-        display: "flex",
-        alignItems: "stretch",
-        marginLeft: leftMargin,
-    },
+
     spacing: spacing,
 
     leftMargin: leftMargin,
 
     chartContainer: {
         marginTop: "1em",
+        //border: 'solid',
         display: "flex",
-        justifyContent: "flex-end",
+        //justifyContent: "flex-end",
+    },
+
+    sliderContainer: {
+        ...frame,
+        marginLeft: leftMargin,
+
+        alignItems: "flex-end",
     },
 };

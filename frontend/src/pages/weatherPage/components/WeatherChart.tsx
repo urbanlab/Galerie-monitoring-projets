@@ -1,8 +1,9 @@
 import * as d3 from "d3";
 import React, { useEffect, useRef, useState } from "react";
 import { Columns } from "../../../models";
+import { styles } from "..//WeatherStyle";
 import icons from "../assets/icons.json";
-import { ChartDimensions, DragElement } from "../weatherModels";
+import { DragElement } from "../weatherModels";
 import { ProjectItem } from "./ProjectItem";
 
 interface Props {
@@ -13,24 +14,26 @@ interface Props {
     saveProject: (projectId: string, etapePrecise: number, meteoPrecise: number) => void;
     mode: string;
     menuRef: React.MutableRefObject<any>;
+    sliderRef: React.MutableRefObject<any>;
 }
 
 export const WeatherChart = (props: Props) => {
     //chart container dimensions
-    const { columns, setElements, elements, onShowDetails, saveProject, mode, menuRef } = props;
+    const { columns, setElements, elements, onShowDetails, saveProject, mode, menuRef, sliderRef } = props;
 
-    const [chartDimensions, setChartDimensions] = useState<ChartDimensions>(new ChartDimensions({}));
+    const [chartDimensions, setChartDimensions] = useState({ width: 0, height: 0 });
+
     const etapes = columns?.etapes?.map((etape) => etape.text) ?? [];
     const meteos = columns?.meteos ?? [];
-    const containerRef = useRef(null);
     const svgRef = useRef(null);
     const isDraggable = mode === "edition";
 
-    const buildChart = (chartDimensions: ChartDimensions) => {
+    const buildChart = (chartDimensions: { width: number; height: number }) => {
         const svg = d3
             .select(svgRef.current)
             .attr("width", chartDimensions.width)
             .attr("height", chartDimensions.height)
+            .attr("viewBox", `0 0 ${chartDimensions.width} ${chartDimensions.height}`)
             .attr("overflow", "visible");
 
         const buildGrid = () => {
@@ -60,7 +63,7 @@ export const WeatherChart = (props: Props) => {
                 .padding(etapesConfig.padding);
 
             const xAxis = d3.axisBottom(xScale).ticks(etapesConfig.domain.length);
-
+            console.log(xScale.step());
             svg.append("g")
                 .call(xAxis)
                 .attr("class", "xAxis")
@@ -69,9 +72,45 @@ export const WeatherChart = (props: Props) => {
                 .style("text-transform", "uppercase")
                 .style("user-select", "none")
                 .style("text-anchor", "center")
-                .style("font-size", 12)
-                .style("font-weight", "bold")
-                .style("fill", "#242F3A");
+                .style("font-size", 14)
+                .style("font-weight", "700")
+                .call(wrap, xScale.step());
+
+            function wrap(text: any, width: any) {
+                //fonction qui wrap un label s'il est trop long
+                text.each(function (this: any) {
+                    var text = d3.select(this),
+                        words = text.text().replace(/-/, " - ").split(/\s+/).reverse(),
+                        word,
+                        line: any = [],
+                        lineNumber = 0,
+                        lineHeight = 1.1, // ems
+                        y = text.attr("y"),
+                        dy = parseFloat(text.attr("dy")),
+                        dx = parseFloat(text.attr("dx")) || 0,
+                        tspan = text
+                            .text(null)
+                            .append("tspan")
+                            .attr("x", 0)
+                            .attr("y", y)
+                            .attr("dy", dy + "em");
+                    while ((word = words.pop())) {
+                        line.push(word);
+                        tspan.text(line.join(" "));
+                        if (tspan.node()!.getComputedTextLength() > width) {
+                            line.pop();
+                            tspan.text(line.join(" ").replace(/-/, ""));
+                            line = [word];
+                            tspan = text
+                                .append("tspan")
+                                .attr("x", 0)
+                                .attr("y", y)
+                                .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                                .text(word);
+                        }
+                    }
+                });
+            }
         };
 
         const buildYAxis = () => {
@@ -133,21 +172,22 @@ export const WeatherChart = (props: Props) => {
         buildGrid();
     };
 
-    useEffect(() => {
-        var newChartDimensions = new ChartDimensions({
-            windowWidth: menuRef.current?.clientWidth,
-            windowHeight: window.innerHeight,
-        });
+    function handleResize() {
+        let height = window.innerHeight - menuRef.current?.clientHeight - 150;
+        if (mode == "evolution") {
+            height = height - sliderRef.current?.clientHeight;
+        }
+        let width = menuRef.current?.clientWidth;
+        var newChartDimensions = {
+            width: width,
+            height: height,
+        };
         setChartDimensions(newChartDimensions);
         buildChart(newChartDimensions);
-        function handleResize() {
-            var newChartDimensions = new ChartDimensions({
-                windowWidth: menuRef.current?.clientWidth,
-                windowHeight: window.innerHeight,
-            });
-            setChartDimensions(newChartDimensions);
-            buildChart(newChartDimensions);
-        }
+    }
+
+    useEffect(() => {
+        handleResize();
         window.addEventListener("resize", () => handleResize());
     }, [columns, mode]);
 
@@ -224,13 +264,18 @@ export const WeatherChart = (props: Props) => {
         <svg
             onPointerUp={(evt) => isDraggable && handlePointerUp(evt)}
             onPointerMove={(evt) => isDraggable && handlePointerMove(evt)}
-            width={chartDimensions.width}
-            height={chartDimensions.height}
+            viewBox={`0 0 ${chartDimensions.width + styles.leftMargin} ${chartDimensions.height + 40}`}
             overflow="visible"
-            ref={containerRef}
         >
-            <svg ref={svgRef}></svg>
-            {rectElements}
+            <svg
+                width={chartDimensions.width}
+                height={chartDimensions.height}
+                viewBox={`-${styles.leftMargin} 0 ${chartDimensions.width} ${chartDimensions.height}`}
+                overflow="visible"
+            >
+                <svg ref={svgRef}></svg>
+                {rectElements}
+            </svg>
         </svg>
     );
 };
