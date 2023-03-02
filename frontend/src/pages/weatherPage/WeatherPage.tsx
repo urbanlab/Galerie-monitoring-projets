@@ -13,15 +13,18 @@ interface Props {
     setIsLoading: (isLoading: boolean) => void;
     onShowDetails: (projectId: string) => void;
     allProjects: Projet[];
+    filteredProjects: Projet[];
     setAllProjects: (projects: Projet[]) => void;
     refresh: number;
+    filters: Filters;
+    setFilters: (filters: Filters) => void;
+    columns: Columns | undefined;
+    setColumns: (columns: Columns) => void;
 }
 
 export const WeatherPage = (props: Props) => {
-    const { setIsLoading, onShowDetails, allProjects, setAllProjects, refresh } = props;
-    const [columns, setColumns] = useState<Columns>();
+    const { setIsLoading, onShowDetails, allProjects, setAllProjects, filteredProjects, refresh, filters, setFilters, columns, setColumns } = props;
     const [elements, setElements] = useState<DragElement[]>([]);
-    const [filters, setFilters] = useState<Filters>(new Filters({}));
     const [allProjectsHistory, setAllProjectsHistory] = useState<AllProjectsHistory>(new AllProjectsHistory([]));
     const [menu, setMenu] = useState<string>(MenuOptions.FILTER);
     const menuRef = useRef<any>(null);
@@ -29,7 +32,7 @@ export const WeatherPage = (props: Props) => {
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
     const [showAllLabels, setShowAllLabels] = useState<boolean>(false);
 
-    const chartProjects = allProjects.filter(
+    const chartProjects = filteredProjects.filter(
         (project) =>
             project.meteo_precise != null &&
             project.etape_precise != null
@@ -42,18 +45,6 @@ export const WeatherPage = (props: Props) => {
                     project.id === updatedProject.id ? updatedProject : project,
                 );
                 setAllProjects(newProjects);
-            })
-            .catch((err: any) => {
-                console.log(err);
-            });
-    }
-
-    async function getColumns() {
-        setIsLoading(true);
-        privateQuery("GET", `/columns_data`, null)
-            .then((events: Columns) => {
-                setColumns(events);
-                setIsLoading(false);
             })
             .catch((err: any) => {
                 console.log(err);
@@ -124,7 +115,6 @@ export const WeatherPage = (props: Props) => {
     }, [selectedDate]);
 
     useEffect(() => {
-        getColumns();
         getAllProjectsHistory();
     }, []);
 
@@ -150,7 +140,7 @@ export const WeatherPage = (props: Props) => {
         } else {
             setElementAtThisDate(selectedDate);
         }
-    }, [refresh, filters]);
+    }, [refresh, filteredProjects, filters.mode]);
 
     const buildChart = () => {
         return (
@@ -176,7 +166,7 @@ export const WeatherPage = (props: Props) => {
                 menuRef={menuRef}
                 setFilters={setFilters}
                 filters={filters}
-                chartProjects={chartProjects}
+                chartProjects={allProjects}
                 columns={columns}
                 handleExport={handleExport}
                 menu={menu}

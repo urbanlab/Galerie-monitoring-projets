@@ -10,12 +10,11 @@ export const styles: any = {
     menuContainer: {
         display: "flex",
         alignItems: "stretch",
-        marginLeft: chartMargin,
+        //marginLeft: chartMargin,
     },
     frame: frame,
     filtersContainer: {
         ...frame,
-
         display: "flex",
         marginLeft: spacing,
         flex: 1,
@@ -31,7 +30,6 @@ export const styles: any = {
         flex: 1,
         margin: '0px 10px',
         textAlign: "start",
-        maxHeight: 50
     },
 
     button: {

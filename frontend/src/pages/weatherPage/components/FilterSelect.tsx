@@ -45,7 +45,8 @@ export const FilterSelect = (props: Props) => {
                     defaultValue={selectValues}
                     isMulti
                     onChange={(selection) => {
-                        onChange(selection.map((item: any) => item.value));
+                        onChange(selection.map((item: any) => item.value))
+                        setIsFocused(false)
                     }}
                     options={selectOptions}
                     placeholder="L'ensemble"

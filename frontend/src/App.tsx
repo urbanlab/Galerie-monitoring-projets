@@ -1,17 +1,19 @@
 import "@fontsource/montserrat";
 import { Buffer } from "buffer";
-import React, { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
+import { FiltersMenu } from "./components/FiltersMenu";
 import NavBar from "./components/Navbar";
 import ProjectsTableModal from "./components/ProjectsTableModal";
 import mockProjets from "./mock-data";
-import { Projet } from "./models";
+import { Columns, Projet } from "./models";
 import MyResponsiveCirclePacking from "./pages/circlePackingPage/CirclePackingPage";
 import { HomePage } from "./pages/homePage/HomePage";
 import Login from "./pages/loginPage/LoginPage";
 import ProjectDetailsModal from "./pages/projectDetailsModal/ProjectDetailsModal";
 import ProjectsTable from "./pages/projectsTablePage/ProjectsTable";
+import { Filters } from "./pages/weatherPage/weatherModels";
 import { WeatherPage } from "./pages/weatherPage/WeatherPage";
 import { privateQuery, useToken } from "./services";
 
@@ -48,12 +50,13 @@ const App = () => {
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
     const [selectedProjects, setSelectedProjects] = useState<Projet[]>([]);
     const [ProjectsTableModalTitle, setProjectsTableModalTitle] = useState<string>("");
-    const [projets, setProjects] = useState<Projet[]>(mockProjets);
-    const [nameFilter, setNameFilter] = useState("");
-    const [sortColumn, setSortColumn] = useState<keyof Projet>("id");
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+    const [projects, setProjects] = useState<Projet[]>(mockProjets);
     const [isLoading, setIsLoading] = useState(false);
     const [refresh, setRefresh] = useState(0);
+    const [filters, setFilters] = useState<Filters>(new Filters({}));
+    const [filteredProjects, setFilteredProjects] = useState<Projet[]>([]);
+    const [columns, setColumns] = useState<Columns>();
+
 
     const cachedProjects = () => {
         setIsLoading(true);
@@ -81,20 +84,33 @@ const App = () => {
             });
     };
 
+    async function getColumns() {
+        setIsLoading(true);
+        privateQuery("GET", `/columns_data`, null)
+            .then((events: Columns) => {
+                setColumns(events);
+                setIsLoading(false);
+            })
+            .catch((err: any) => {
+                console.log(err);
+            });
+    }
+
     useEffect(() => {
         cachedProjects();
+        getColumns();
         updateProjects();
     }, []);
 
     /* =================== Sort projects =================== */
-    const handleSort = (column: keyof Projet) => {
-        if (sortColumn === column) {
-            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-        } else {
-            setSortColumn(column);
-            setSortDirection("asc");
-        }
-    };
+    // const handleSort = (column: keyof Projet) => {
+    //     if (sortColumn === column) {
+    //         setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    //     } else {
+    //         setSortColumn(column);
+    //         setSortDirection("asc");
+    //     }
+    // };
 
     /* =================== Show project details =================== */
     function showProjectDetails(projectId: string) {
@@ -102,28 +118,41 @@ const App = () => {
         setProjectDetailsIsOpen(true);
     }
 
-    const selectedProject = selectedProjectId ? projets.find((projet) => projet.id === selectedProjectId) : undefined;
+    const selectedProject = selectedProjectId ? projects.find((projet) => projet.id === selectedProjectId) : undefined;
 
     /* =================== Project table modal =================== */
     function showProjectsTableModal(title: string, filter: (projet: Projet) => boolean) {
         setProjectsTableModalTitle(title);
-        setSelectedProjects(projets.filter(filter));
+        setSelectedProjects(projects.filter(filter));
     }
 
     /* =================== Filter projects =================== */
-    const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNameFilter(event.target.value);
-    };
-    const filteredProjects = projets.filter((projet) =>
-        projet.projet?.toLowerCase().includes(nameFilter.toLowerCase()),
-    );
-    const sortedProjects = [...filteredProjects]?.sort((a, b) => {
-        if (sortDirection === "asc") {
-            return (a[sortColumn] || 0) > (b[sortColumn] || 0) ? 1 : -1;
-        } else {
-            return (a[sortColumn] || 0) < (b[sortColumn] || 0) ? 1 : -1;
-        }
-    });
+    // const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setNameFilter(event.target.value);
+    // };
+    // const filteredProjects = projects.filter((projet) =>
+    //     projet.projet?.toLowerCase().includes(nameFilter.toLowerCase()),
+    // );
+    // const sortedProjects = [...filteredProjects]?.sort((a, b) => {
+    //     if (sortDirection === "asc") {
+    //         return (a[sortColumn] || 0) > (b[sortColumn] || 0) ? 1 : -1;
+    //     } else {
+    //         return (a[sortColumn] || 0) < (b[sortColumn] || 0) ? 1 : -1;
+    //     }
+    // });
+
+    useEffect(() => {
+        let newFilteredProjects = projects.filter((projet) => filters.isProjectVisible(projet));
+        setFilteredProjects(newFilteredProjects);
+
+    }, [filters.typeActivite, filters.directeurOuReferentsProjet, filters.etat, filters.politiquesPubliques, projects])
+
+    const filtersMenu = (<FiltersMenu
+        columns={columns}
+        filters={filters}
+        setFilters={setFilters}
+        projects={projects}
+    />)
 
     /* =================== Render =================== */
     return (
@@ -140,7 +169,7 @@ const App = () => {
                             setProjectDetailsIsOpen(false);
                         }}
                         setAllProjects={setProjects}
-                        allProjects={projets}
+                        allProjects={projects}
                     />
                 )}
                 {/* === Project Table Modal === */}
@@ -161,8 +190,9 @@ const App = () => {
                         path="/"
                         element={
                             <PrivateRoute>
+                                {filtersMenu}
                                 <HomePage
-                                    projets={sortedProjects}
+                                    projets={filteredProjects}
                                     setIsLoading={setIsLoading}
                                     showProjectsTableModal={showProjectsTableModal}
                                 ></HomePage>
@@ -175,7 +205,8 @@ const App = () => {
                         path="/table"
                         element={
                             <PrivateRoute>
-                                <ProjectsTable projets={sortedProjects} onShowDetails={showProjectDetails} />
+                                {filtersMenu}
+                                <ProjectsTable projets={filteredProjects} onShowDetails={showProjectDetails} />
                             </PrivateRoute>
                         }
                     />
@@ -188,9 +219,14 @@ const App = () => {
                                 <WeatherPage
                                     setIsLoading={setIsLoading}
                                     onShowDetails={showProjectDetails}
-                                    allProjects={projets}
+                                    allProjects={projects}
+                                    filteredProjects={filteredProjects}
                                     setAllProjects={setProjects}
                                     refresh={refresh}
+                                    filters={filters}
+                                    setFilters={setFilters}
+                                    columns={columns}
+                                    setColumns={setColumns}
                                 />
                             </PrivateRoute>
                         }
@@ -201,9 +237,10 @@ const App = () => {
                         path="/circleCharts"
                         element={
                             <PrivateRoute>
+                                {filtersMenu}
                                 <div className="d-flex justify-content-center mt-5 m-auto">
                                     <MyResponsiveCirclePacking
-                                        projets={projets}
+                                        projets={filteredProjects}
                                         showProjectsTableModal={showProjectsTableModal}
                                     />
                                 </div>

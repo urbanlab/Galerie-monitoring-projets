@@ -1,9 +1,9 @@
 import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { Button } from "react-bootstrap";
+import { buildFilters } from "../../../components/FiltersMenu";
 import { Columns, Projet } from "../../../models";
 import { Filters, MenuMode, MenuOptions } from "../weatherModels";
 import { styles } from "../WeatherStyle";
-import { FilterSelect } from "./FilterSelect";
 
 interface Props {
     menu: string;
@@ -11,7 +11,6 @@ interface Props {
     setMenu: (menu: string) => void;
     columns: Columns | undefined;
     menuRef: React.MutableRefObject<any>;
-    //applyFilters: (elements: DragElement[], filters: Filters) => void;
     filters: Filters;
     setFilters: (filters: Filters) => void;
     handleExport: () => void;
@@ -50,69 +49,6 @@ export const WeatherMenu = (props: Props) => {
         );
     };
 
-    const getDirecteursEtReferentsProjets = () => {
-        var directeursEtReferents: string[] = [];
-        for (var project of chartProjects) {
-            for (var referent of project.chef_de_projet_ou_referent) {
-                if (!directeursEtReferents.includes(referent.name)) {
-                    directeursEtReferents.push(referent.name);
-                }
-            }
-            for (var directeur of project.directeur_projet) {
-                if (!directeursEtReferents.includes(directeur.name)) {
-                    directeursEtReferents.push(directeur.name);
-                }
-            }
-        }
-        return directeursEtReferents;
-    };
-
-    const buildFilters = () => {
-        return (
-            <>
-                <FilterSelect
-                    title={"Directeur ou Référent Projet"}
-                    options={getDirecteursEtReferentsProjets()}
-                    values={filters.directeurOuReferentsProjet}
-                    onChange={(values: string[]) => {
-                        var newFilters = new Filters({ ...filters, directeurOuReferentsProjet: values });
-                        setFilters(newFilters);
-                    }}
-                />
-                <FilterSelect
-                    title={"Type d'activité"}
-                    options={columns?.types_activite?.map((type_activite) => type_activite.text) ?? []}
-                    values={filters.typeActivite}
-                    onChange={(values: string[]) => {
-                        var newFilters = new Filters({ ...filters, typeActivite: values });
-                        setFilters(newFilters);
-                    }}
-                />
-                <FilterSelect
-                    title={"Politiques publiques"}
-                    options={
-                        columns?.politiques_publiques?.map((politique_publique) => politique_publique.text) ?? []
-                    }
-                    values={filters.politiquesPubliques}
-                    onChange={(values: string[]) => {
-                        var newFilters = new Filters({ ...filters, politiquesPubliques: values });
-                        setFilters(newFilters);
-                    }}
-                />
-                <FilterSelect
-                    title={"Etat"}
-                    options={columns?.etats.map((etat) => etat.text) ?? []}
-                    values={filters.etat}
-                    onChange={(values: string[]) => {
-                        var newFilters = new Filters({ ...filters, etat: values });
-                        setFilters(newFilters);
-                    }}
-                />
-
-            </>
-        );
-    };
-
     const buildExport = () => {
         return (
             <div style={styles.singleFilterContainer}>
@@ -146,7 +82,7 @@ export const WeatherMenu = (props: Props) => {
         const content = () => {
             switch (menu) {
                 case MenuOptions.FILTER:
-                    return buildFilters();
+                    return buildFilters(chartProjects, filters, columns, setFilters);
                 case MenuOptions.EXPORT:
                     return buildExport();
                 case MenuOptions.MODE:
