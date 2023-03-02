@@ -3,6 +3,7 @@ export const styles: any = {
         boxShadow: "rgba(0, 0, 0, 0.5) 3px 3px 8px",
     },
     title: {
+        flex:1,
         fontSize: "1em",
         fontWeight: "bold",
         textAlign: "left",
