@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Columns } from "../../../models";
 import { styles } from "..//WeatherStyle";
 import icons from "../assets/icons.json";
-import { DragElement } from "../weatherModels";
+import { DragElement, MenuMode } from "../weatherModels";
 import { ProjectItem } from "./ProjectItem";
 
 interface Props {
@@ -26,13 +26,14 @@ export const WeatherChart = (props: Props) => {
     const etapes = columns?.etapes?.map((etape) => etape.text) ?? [];
     const meteos = columns?.meteos ?? [];
     const svgRef = useRef(null);
-    const isDraggable = mode === "edition";
+    const isDraggable = mode === MenuMode.EDITION;
 
-    const buildChart = (chartDimensions: { width: number; height: number }) => {
+    const buildChart = (chartDimensions: { width: number, height: number }) => {
         const svg = d3
             .select(svgRef.current)
             .attr("width", chartDimensions.width)
             .attr("height", chartDimensions.height)
+            .attr("viewBox", `0 0 ${chartDimensions.width} ${chartDimensions.height}`)
             .attr("viewBox", `0 0 ${chartDimensions.width} ${chartDimensions.height}`)
             .attr("overflow", "visible");
 
@@ -63,7 +64,6 @@ export const WeatherChart = (props: Props) => {
                 .padding(etapesConfig.padding);
 
             const xAxis = d3.axisBottom(xScale).ticks(etapesConfig.domain.length);
-            console.log(xScale.step());
             svg.append("g")
                 .call(xAxis)
                 .attr("class", "xAxis")
@@ -98,6 +98,7 @@ export const WeatherChart = (props: Props) => {
                         line.push(word);
                         tspan.text(line.join(" "));
                         if (tspan.node()!.getComputedTextLength() > width) {
+
                             line.pop();
                             tspan.text(line.join(" ").replace(/-/, ""));
                             line = [word];
@@ -111,6 +112,8 @@ export const WeatherChart = (props: Props) => {
                     }
                 });
             }
+
+
         };
 
         const buildYAxis = () => {
@@ -173,11 +176,11 @@ export const WeatherChart = (props: Props) => {
     };
 
     function handleResize() {
-        let height = window.innerHeight - menuRef.current?.clientHeight - 150;
-        if (mode == "evolution") {
-            height = height - sliderRef.current?.clientHeight;
+        let height = window.innerHeight - menuRef.current?.clientHeight - 150
+        if (mode == MenuMode.EVOLUTION) {
+            height = height - sliderRef.current?.clientHeight
         }
-        let width = menuRef.current?.clientWidth;
+        let width = menuRef.current?.clientWidth
         var newChartDimensions = {
             width: width,
             height: height,
@@ -187,8 +190,9 @@ export const WeatherChart = (props: Props) => {
     }
 
     useEffect(() => {
-        handleResize();
+        handleResize()
         window.addEventListener("resize", () => handleResize());
+
     }, [columns, mode]);
 
     function handlePointerMove(e: React.PointerEvent<SVGElement>) {
@@ -196,8 +200,8 @@ export const WeatherChart = (props: Props) => {
         let newElements = elements.map(function (item): DragElement {
             if (item.active === true) {
                 const bbox = e.currentTarget.getBoundingClientRect();
-                const x = e.clientX - bbox.left - (item.offsetX ?? 0); //coord du clique sur l'écran
-                const y = e.clientY - bbox.top - (item.offsetY ?? 0);
+                const x = e.clientX - (item.offsetX ?? 0) - bbox.left - styles.chartMargin; //coord du clique sur l'écran
+                const y = e.clientY - (item.offsetY ?? 0) - bbox.top;
                 var newXCoord = Math.min(Math.max(0, x), chartDimensions.width);
                 var newYCoord = Math.min(Math.max(0, y), chartDimensions.height);
 
@@ -262,16 +266,16 @@ export const WeatherChart = (props: Props) => {
 
     return (
         <svg
+            width={chartDimensions.width + styles.chartMargin}
+            height={chartDimensions.height + styles.chartMargin}
             onPointerUp={(evt) => isDraggable && handlePointerUp(evt)}
             onPointerMove={(evt) => isDraggable && handlePointerMove(evt)}
-            viewBox={`0 0 ${chartDimensions.width + styles.leftMargin} ${chartDimensions.height + 40}`}
-            overflow="visible"
         >
             <svg
+                overflow="visible"
+                x="60"
                 width={chartDimensions.width}
                 height={chartDimensions.height}
-                viewBox={`-${styles.leftMargin} 0 ${chartDimensions.width} ${chartDimensions.height}`}
-                overflow="visible"
             >
                 <svg ref={svgRef}></svg>
                 {rectElements}

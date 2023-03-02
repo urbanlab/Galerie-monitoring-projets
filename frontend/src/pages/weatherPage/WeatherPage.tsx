@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Columns, ProjectHistory, Projet } from "../../models";
 import { privateQuery } from "../../services";
+import { exportAsSVG } from "../../utils/export";
 import { AnimateElements } from "./components/AnimateElements";
 import { TimeSlider } from "./components/TimeSlider";
 import { WeatherChart } from "./components/WeatherChart";
 import { WeatherMenu } from "./components/WeatherMenu";
-import { AllProjectsHistory, DragElement, Filters, MenuOptions } from "./weatherModels";
+import { AllProjectsHistory, DragElement, Filters, MenuMode, MenuOptions } from "./weatherModels";
 import { styles } from "./WeatherStyle";
 
 interface Props {
@@ -22,7 +23,7 @@ export const WeatherPage = (props: Props) => {
     const [elements, setElements] = useState<DragElement[]>([]);
     const [filters, setFilters] = useState<Filters>(new Filters({}));
     const [allProjectsHistory, setAllProjectsHistory] = useState<AllProjectsHistory>(new AllProjectsHistory([]));
-    const [menu, setMenu] = useState<string>(MenuOptions.filter);
+    const [menu, setMenu] = useState<string>(MenuOptions.FILTER);
     const menuRef = useRef<any>(null);
     const chartRef = useRef<any>(null);
     const sliderRef = useRef<any>(null);
@@ -82,50 +83,16 @@ export const WeatherPage = (props: Props) => {
             });
     }
 
-    const isProjectVisible = (project: Projet) => {
-        let isVisible = true;
-        if (
-            filters.directeurProjet !== "all" &&
-            !project.directeur_projet?.map((directeur) => directeur.name).includes(filters.directeurProjet)
-        ) {
-            isVisible = false;
-        }
-        if (
-            filters.referentsProjet !== "all" &&
-            !project.chef_de_projet_ou_referent
-                ?.map((referent) => referent.name)
-                .includes(filters.referentsProjet)
-        ) {
-            isVisible = false;
-        }
-        if (
-            filters.politiquesPubliques !== "all" &&
-            !project.politiques_publiques
-                ?.map((politique_publique) => politique_publique.text)
-                .includes(filters.politiquesPubliques)
-        ) {
-            isVisible = false;
-        }
-        if (filters.typeActivite !== "all" && project.type_activite?.text !== filters.typeActivite) {
-            isVisible = false;
-        }
-        if (
-            filters.etat !== "all" && project.etat?.text !== filters.etat) {
-            isVisible = false;
-        }
-        return isVisible
-    }
-
     function handleExport() {
         const svg = chartRef.current.querySelector("svg");
-        const svgString = new XMLSerializer().serializeToString(svg);
-        // create a download link
-        const downloadLink = document.createElement("a");
-        downloadLink.download = "chart.svg";
-        downloadLink.href = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+        let date = new Date().toISOString().slice(0, 10);
+
+        if (filters.mode == MenuMode.EVOLUTION) {
+            date = selectedDate;
+        }
+        let fileName = `meteo_${date}`;
+
+        exportAsSVG(svg, fileName);
     }
 
 
@@ -136,7 +103,7 @@ export const WeatherPage = (props: Props) => {
         var projectsList = date == new Date().toISOString().slice(0, 10) ? chartProjects : allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date)
 
         for (var project of projectsList) {
-            if (isProjectVisible(project)) {
+            if (filters.isProjectVisible(project)) {
                 endElements.push({
                     xNorm: project.etape_precise ?? 0,
                     yNorm: 1 - (project.meteo_precise ?? 1),
@@ -158,10 +125,10 @@ export const WeatherPage = (props: Props) => {
 
     //initialize elements
     useEffect(() => {
-        if (filters.mode == "edition") {
+        if (filters.mode == MenuMode.EDITION) {
             var newElements: DragElement[] = [];
             for (var project of chartProjects) {
-                if (isProjectVisible(project)) {
+                if (filters.isProjectVisible(project)) {
                     newElements.push({
                         xNorm: project.etape_precise ?? 0,
                         yNorm: 1 - (project.meteo_precise ?? 1),
@@ -211,7 +178,7 @@ export const WeatherPage = (props: Props) => {
             />
 
             {buildChart()}
-            {filters.mode == "evolution" && (
+            {filters.mode == MenuMode.EVOLUTION && (
                 <div className="d-flex" style={styles.sliderContainer} ref={sliderRef}>
                     <TimeSlider
                         allProjectsHistory={allProjectsHistory}

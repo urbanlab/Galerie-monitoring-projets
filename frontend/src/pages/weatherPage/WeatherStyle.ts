@@ -1,19 +1,20 @@
 const spacing = "3px";
-const leftMargin = 60;
+const chartMargin = 60;
 
 const frame = {
     backgroundColor: "#ebebeb",
     boxShadow: "-1px 1px 3px 0px rgba(0,0,0,0.3)",
-};
+}
 
 export const styles: any = {
     menuContainer: {
         display: "flex",
         alignItems: "stretch",
-        marginLeft: leftMargin,
+        marginLeft: chartMargin,
     },
     frame: frame,
     filtersContainer: {
+        ...frame,
         ...frame,
         display: "flex",
         marginLeft: spacing,
@@ -53,10 +54,11 @@ export const styles: any = {
 
     spacing: spacing,
 
-    leftMargin: leftMargin,
+    chartMargin: chartMargin,
 
     chartContainer: {
         marginTop: "1em",
+        //border: 'solid',
         //border: 'solid',
         display: "flex",
         //justifyContent: "flex-end",
@@ -64,8 +66,9 @@ export const styles: any = {
 
     sliderContainer: {
         ...frame,
-        marginLeft: leftMargin,
+        marginLeft: chartMargin,
 
         alignItems: "flex-end",
-    },
+
+    }
 };
