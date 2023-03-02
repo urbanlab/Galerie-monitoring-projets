@@ -1,14 +1,16 @@
 // install (please make sure versions match peerDependencies)
 // yarn add @nivo/core @nivo/circle-packing
 
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CirclePackingSvgProps, ResponsiveCirclePacking } from "@nivo/circle-packing";
 import { useState } from "react";
+import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { ColoredText, Projet } from "../../models";
 import getBgColorByName from "../../utils/colors";
-import { augmentSaturation, formatData } from "./circlePackingDataFormat";
 import { exportAsSVG } from "../../utils/export";
-import { Button } from "react-bootstrap";
+import { augmentSaturation, formatData } from "./circlePackingDataFormat";
 
 interface Props {
     projets: Projet[];
@@ -113,7 +115,7 @@ const MyResponsiveCirclePacking = ({ projets, showProjectsTableModal }: Props) =
                 </div>
             </div>
             <Button variant="secondary" onClick={() => handleExport("CirclePage", "CirclePage")}>
-                export
+                <FontAwesomeIcon icon={faDownload} /> Exporter
             </Button>
         </div>
 

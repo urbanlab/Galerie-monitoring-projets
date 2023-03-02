@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { Columns, Projet } from "../../models";
 import { privateQuery } from "../../services";
+import { exportAsSVG } from "../../utils/export";
 import BarChartBudget from "./components/BarChartBudget";
 import BarChart from "./components/BarChartSteps";
 import MeteoCircleChart from "./components/MeteoCircleChart";
 import { PieChart } from "./components/PieChart";
 import { styles } from "./HomeStyle";
-import { exportAsSVG } from "../../utils/export";
-import { Button } from "react-bootstrap";
-import { BsDownload } from 'react-icons/bs';
 
 interface Props {
     projets: Projet[];
@@ -79,8 +79,8 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                                 <p style={styles.title} className="m-2">
                                     Nombre des projets selon l'étape
                                 </p>
-                                <Button variant="secondary" onClick={() => handleExport("barchart", "BarChart")}>
-                                    <BsDownload />
+                                <Button variant="outline-secondary" onClick={() => handleExport("barchart", "BarChart")}>
+                                    <FontAwesomeIcon icon={faDownload} />
                                 </Button>
                             </div>
                             <div style={styles.chart} className="barchart">
@@ -98,8 +98,8 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                                 <p style={styles.title} className="m-2">
                                     Méteo
                                 </p>
-                                <Button variant="secondary" onClick={() => handleExport("MeteoCircle", "MeteoCircleChart")}>
-                                    <BsDownload />
+                                <Button variant="outline-secondary" onClick={() => handleExport("MeteoCircle", "MeteoCircleChart")}>
+                                    <FontAwesomeIcon icon={faDownload} />
                                 </Button>
                             </div>
                             <div style={styles.chart} className="MeteoCircle">
@@ -118,8 +118,8 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                                 <p style={styles.title} className="m-2">
                                     Budget par type d'activité
                                 </p>
-                                <Button variant="secondary" onClick={() => handleExport("BudgetBarChart", "BudgetBarChart")}>
-                                    <BsDownload />
+                                <Button variant="outline-secondary" onClick={() => handleExport("BudgetBarChart", "BudgetBarChart")}>
+                                    <FontAwesomeIcon icon={faDownload} />
                                 </Button>
                             </div>
                             <div style={{ ...styles.chart }} className="BudgetBarChart">
@@ -134,8 +134,8 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                                 <p style={styles.title} className="m-2">
                                     Status des projets
                                 </p>
-                                <Button variant="secondary" onClick={() => handleExport("PieChart", "PieChart")}>
-                                    <BsDownload />
+                                <Button variant="outline-secondary" onClick={() => handleExport("PieChart", "PieChart")}>
+                                    <FontAwesomeIcon icon={faDownload} />
                                 </Button>
                             </div>
                             <div style={styles.chart} className="PieChart">
