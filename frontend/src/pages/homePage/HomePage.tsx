@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { Columns, Projet } from "../../models";
 import { privateQuery } from "../../services";
@@ -7,6 +7,9 @@ import BarChart from "./components/BarChartSteps";
 import MeteoCircleChart from "./components/MeteoCircleChart";
 import { PieChart } from "./components/PieChart";
 import { styles } from "./HomeStyle";
+import { exportAsSVG } from "../../utils/export";
+import { Button } from "react-bootstrap";
+import { BsDownload } from 'react-icons/bs';
 
 interface Props {
     projets: Projet[];
@@ -40,18 +43,11 @@ const formatMeteo = (projets: Projet[]) => {
 export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Props) => {
     const [columns, setColumns] = useState<Columns>();
     const [meteoFormatted, setMeteoFormatted] = useState<any>(formatMeteo(projets));
-    const getWeatherType = (weather: string): string => {
-        switch (weather) {
-            case "☀️":
-                return "sunny";
-            case "⛅️":
-                return "cloudy";
-            case "🌧":
-                return "rainy";
-            default:
-                return "unknown";
-        }
-    };
+    
+    function handleExport(className:string, fileName:string) {
+        const svg :any = document.querySelector(`.${className} svg`);
+        exportAsSVG(svg, fileName);
+    }
 
     async function getColumns() {
         setIsLoading(true);
@@ -77,11 +73,17 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
             <Container fluid>
                 <Row className="mx-5 mb-1">
                     <Col md={8} className="ps-5 pe-3 pt-5 pb-4">
+
                         <div className="p-2 bg-light" style={styles.shadow}>
-                            <p style={styles.title} className="m-2">
-                                Nombre des projets selon l'étape
-                            </p>
-                            <div style={styles.chart} className="p-3">
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <p style={styles.title} className="m-2">
+                                    Nombre des projets selon l'étape
+                                </p>
+                                <Button variant="secondary" onClick={() => handleExport("barchart", "BarChart")}>
+                                    <BsDownload />
+                                </Button>
+                            </div>
+                            <div style={styles.chart} className="barchart">
                                 <BarChart
                                     projects={projets}
                                     columns={columns}
@@ -92,10 +94,15 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                     </Col>
                     <Col md={4} className="ps-3 pe-5 pt-5 pb-4">
                         <div className="p-2 bg-light" style={styles.shadow}>
-                            <p style={styles.title} className="m-2">
-                                Méteo
-                            </p>
-                            <div style={styles.chart} className="m-auto">
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <p style={styles.title} className="m-2">
+                                    Méteo
+                                </p>
+                                <Button variant="secondary" onClick={() => handleExport("MeteoCircle", "MeteoCircleChart")}>
+                                    <BsDownload />
+                                </Button>
+                            </div>
+                            <div style={styles.chart} className="MeteoCircle">
                                 <MeteoCircleChart
                                     meteo={meteoFormatted}
                                     showProjectsTableModal={showProjectsTableModal}
@@ -107,10 +114,15 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                 <Row className="mx-5 my-1">
                     <Col md={8} className="ps-5 pe-3 pb-5">
                         <div className="p-2 bg-light" style={styles.shadow}>
-                            <p style={styles.title} className="m-2">
-                                Budget par type d'activité
-                            </p>
-                            <div style={{ ...styles.chart }} className="p-3">
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <p style={styles.title} className="m-2">
+                                    Budget par type d'activité
+                                </p>
+                                <Button variant="secondary" onClick={() => handleExport("BudgetBarChart", "BudgetBarChart")}>
+                                    <BsDownload />
+                                </Button>
+                            </div>
+                            <div style={{ ...styles.chart }} className="BudgetBarChart">
                                 <BarChartBudget projects={projets}></BarChartBudget>
                             </div>
                         </div>
@@ -118,10 +130,15 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
 
                     <Col md={4} className="ps-3 pe-5 pb-5">
                         <div className="p-2 bg-light" style={styles.shadow}>
-                            <p style={styles.title} className="m-2">
-                                Status des projets
-                            </p>
-                            <div style={styles.chart} className="m-auto">
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <p style={styles.title} className="m-2">
+                                    Status des projets
+                                </p>
+                                <Button variant="secondary" onClick={() => handleExport("PieChart", "PieChart")}>
+                                    <BsDownload />
+                                </Button>
+                            </div>
+                            <div style={styles.chart} className="PieChart">
                                 <PieChart
                                     projects={projets}
                                     columns={columns}
@@ -131,6 +148,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                         </div>
                     </Col>
                 </Row>
+
             </Container>
         </div>
     );
