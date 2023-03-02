@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragElement } from "../weatherModels";
 import { Fade } from "./Fade";
 
@@ -8,16 +8,28 @@ interface Props {
     chartDimensions: { width: number, height: number };
     onShowDetails: (projectId: string) => void;
     handlePointerDown: (index1: number, e: React.PointerEvent<SVGElement>) => void;
+    showAllLabels: boolean;
 }
 
 export const ProjectItem = (props: Props) => {
-    const { item, index, chartDimensions, onShowDetails, handlePointerDown } = props;
+    const { item, index, chartDimensions, onShowDetails, handlePointerDown, showAllLabels } = props;
     const radius = Math.min(Math.max(chartDimensions.width, chartDimensions.height) / 50, 25);
     const xCoord = item.xNorm * chartDimensions.width;
     const yCoord = item.yNorm * chartDimensions.height;
     const labelWidth = Math.max(100, Math.min(300, 8 * radius));
 
     const [showLabel, setShowLabel] = useState(false);
+
+    useEffect(() => {
+        if (showAllLabels) {
+            setShowLabel(true);
+        } else {
+            setShowLabel(false);
+        }
+    }, [showAllLabels]);
+
+
+
     const buildLogo = () => {
         let icon;
         if (item.project.icon?.type === "emoji" || item.project.icon?.type == null) {
@@ -60,7 +72,7 @@ export const ProjectItem = (props: Props) => {
     const label = (
         <Fade
             in={showLabel}
-            duration={100}
+            duration={showAllLabels ? 0 : 100}
             children={
                 <foreignObject
                     x={xCoord - labelWidth / 2}
@@ -82,6 +94,9 @@ export const ProjectItem = (props: Props) => {
                             color: "#323232",
                             fontWeight: 500,
                             lineHeight: 1,
+                            fontFamily: "Montserrat, sans-serif",
+                            textAlign: "center",
+                            margin: 0,
                         }}
                     >
                         {item.project.projet}

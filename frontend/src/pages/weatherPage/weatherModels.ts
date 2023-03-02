@@ -15,10 +15,10 @@ export interface DragElement {
 
 export class Filters {
     constructor({
-        typeActivite = "all",
-        politiquesPubliques = "all",
-        etat = "all",
-        directeurOuReferentsProjet = "all",
+        typeActivite = [] as string[],
+        politiquesPubliques = [] as string[],
+        etat = [] as string[],
+        directeurOuReferentsProjet = [] as string[],
         mode = MenuMode.EDITION as string,
     }) {
         this.typeActivite = typeActivite;
@@ -27,39 +27,46 @@ export class Filters {
         this.directeurOuReferentsProjet = directeurOuReferentsProjet;
         this.mode = mode;
     }
-    typeActivite: string;
-    politiquesPubliques: string;
-    directeurOuReferentsProjet: string;
-    etat: string;
+    typeActivite: string[];
+    politiquesPubliques: string[];
+    directeurOuReferentsProjet: string[];
+    etat: string[];
     mode: string;
 
     isProjectVisible = (project: Projet) => {
         let isVisible = true;
 
         if (
-            this.directeurOuReferentsProjet !== "all" &&
-            !(project.chef_de_projet_ou_referent
-                ?.map((referent) => referent.name)
-                .includes(this.directeurOuReferentsProjet)
-                || project.directeur_projet
-                    ?.map((directeur) => directeur.name)
-                    .includes(this.directeurOuReferentsProjet))
+            this.directeurOuReferentsProjet.length > 0 &&
+            (project.chef_de_projet_ou_referent.concat(project.directeur_projet))
+                .map((referent) => referent.name)
+                .filter(x => this.directeurOuReferentsProjet.indexOf(x) !== -1)
+                .length === 0
         ) {
             isVisible = false;
         }
         if (
-            this.politiquesPubliques !== "all" &&
-            !project.politiques_publiques
+            this.politiquesPubliques.length > 0 &&
+            project.politiques_publiques
                 ?.map((politique_publique) => politique_publique.text)
-                .includes(this.politiquesPubliques)
+                .filter(x => this.politiquesPubliques.indexOf(x) !== -1)
+                .length === 0
         ) {
             isVisible = false;
         }
-        if (this.typeActivite !== "all" && project.type_activite?.text !== this.typeActivite) {
+        if (this.typeActivite.length > 0 &&
+            (project.type_activite?.text == null ||
+                project.type_activite?.text != null &&
+                this.typeActivite.indexOf(project.type_activite.text) === -1)
+        ) {
             isVisible = false;
         }
         if (
-            this.etat !== "all" && project.etat?.text !== this.etat) {
+            this.etat.length > 0 &&
+            (project.etat?.text == null ||
+                project.etat?.text != null &&
+                this.etat.indexOf(project.etat.text) === -1)
+        ) {
             isVisible = false;
         }
         return isVisible

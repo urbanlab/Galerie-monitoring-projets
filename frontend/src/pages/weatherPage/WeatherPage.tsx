@@ -25,9 +25,9 @@ export const WeatherPage = (props: Props) => {
     const [allProjectsHistory, setAllProjectsHistory] = useState<AllProjectsHistory>(new AllProjectsHistory([]));
     const [menu, setMenu] = useState<string>(MenuOptions.FILTER);
     const menuRef = useRef<any>(null);
-    const chartRef = useRef<any>(null);
     const sliderRef = useRef<any>(null);
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
+    const [showAllLabels, setShowAllLabels] = useState<boolean>(false);
 
     const chartProjects = allProjects.filter(
         (project) =>
@@ -84,15 +84,20 @@ export const WeatherPage = (props: Props) => {
     }
 
     function handleExport() {
-        const svg = chartRef.current.querySelector("svg");
+        const svg: any = document.querySelector(".weatherChart svg");
         let date = new Date().toISOString().slice(0, 10);
 
         if (filters.mode == MenuMode.EVOLUTION) {
             date = selectedDate;
         }
         let fileName = `meteo_${date}`;
+        setShowAllLabels(true);
+        setTimeout(() => {
+            exportAsSVG(svg, fileName);
+            setShowAllLabels(false);
+        }, 100);
 
-        exportAsSVG(svg, fileName);
+        //setShowAllLabels(false);
     }
 
 
@@ -149,7 +154,7 @@ export const WeatherPage = (props: Props) => {
 
     const buildChart = () => {
         return (
-            <div style={styles.chartContainer} ref={chartRef}>
+            <div style={styles.chartContainer} className='weatherChart'>
                 <WeatherChart
                     columns={columns}
                     elements={elements}
@@ -159,6 +164,7 @@ export const WeatherPage = (props: Props) => {
                     mode={filters.mode}
                     menuRef={menuRef}
                     sliderRef={sliderRef}
+                    showAllLabels={showAllLabels}
                 />
             </div>
         );

@@ -15,7 +15,7 @@ export const styles: any = {
     frame: frame,
     filtersContainer: {
         ...frame,
-        ...frame,
+
         display: "flex",
         marginLeft: spacing,
         flex: 1,
@@ -28,6 +28,10 @@ export const styles: any = {
 
     singleFilterContainer: {
         display: "flex",
+        flex: 1,
+        margin: '0px 10px',
+        textAlign: "start",
+        maxHeight: 50
     },
 
     button: {
@@ -58,16 +62,12 @@ export const styles: any = {
 
     chartContainer: {
         marginTop: "1em",
-        //border: 'solid',
-        //border: 'solid',
         display: "flex",
-        //justifyContent: "flex-end",
     },
 
     sliderContainer: {
         ...frame,
         marginLeft: chartMargin,
-
         alignItems: "flex-end",
 
     }

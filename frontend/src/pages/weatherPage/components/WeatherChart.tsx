@@ -15,11 +15,12 @@ interface Props {
     mode: string;
     menuRef: React.MutableRefObject<any>;
     sliderRef: React.MutableRefObject<any>;
+    showAllLabels: boolean;
 }
 
 export const WeatherChart = (props: Props) => {
     //chart container dimensions
-    const { columns, setElements, elements, onShowDetails, saveProject, mode, menuRef, sliderRef } = props;
+    const { columns, setElements, elements, onShowDetails, saveProject, mode, menuRef, sliderRef, showAllLabels } = props;
 
     const [chartDimensions, setChartDimensions] = useState({ width: 0, height: 0 });
 
@@ -260,6 +261,7 @@ export const WeatherChart = (props: Props) => {
                 chartDimensions={chartDimensions}
                 onShowDetails={onShowDetails}
                 handlePointerDown={(i, e) => isDraggable && handlePointerDown(i, e)}
+                showAllLabels={showAllLabels}
             />
         );
     });

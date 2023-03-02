@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import { Columns, Projet } from "../../../models";
 import { Filters, MenuMode, MenuOptions } from "../weatherModels";
 import { styles } from "../WeatherStyle";
-import { Select } from "./FilterSelect";
+import { FilterSelect } from "./FilterSelect";
 
 interface Props {
     menu: string;
@@ -70,57 +70,45 @@ export const WeatherMenu = (props: Props) => {
     const buildFilters = () => {
         return (
             <>
-                <div style={styles.singleFilterContainer}>
-                    <Select
-                        title={"Directeur ou Référent Projet"}
-                        options={getDirecteursEtReferentsProjets()}
-                        value={filters.directeurOuReferentsProjet}
-                        onChange={(value: string) => {
-                            var newFilters = new Filters({ ...filters, directeurOuReferentsProjet: value });
-                            //applyFilters(elements, newFilters);
-                            setFilters(newFilters);
-                        }}
-                    />
-                </div>
+                <FilterSelect
+                    title={"Directeur ou Référent Projet"}
+                    options={getDirecteursEtReferentsProjets()}
+                    values={filters.directeurOuReferentsProjet}
+                    onChange={(values: string[]) => {
+                        var newFilters = new Filters({ ...filters, directeurOuReferentsProjet: values });
+                        setFilters(newFilters);
+                    }}
+                />
+                <FilterSelect
+                    title={"Type d'activité"}
+                    options={columns?.types_activite?.map((type_activite) => type_activite.text) ?? []}
+                    values={filters.typeActivite}
+                    onChange={(values: string[]) => {
+                        var newFilters = new Filters({ ...filters, typeActivite: values });
+                        setFilters(newFilters);
+                    }}
+                />
+                <FilterSelect
+                    title={"Politiques publiques"}
+                    options={
+                        columns?.politiques_publiques?.map((politique_publique) => politique_publique.text) ?? []
+                    }
+                    values={filters.politiquesPubliques}
+                    onChange={(values: string[]) => {
+                        var newFilters = new Filters({ ...filters, politiquesPubliques: values });
+                        setFilters(newFilters);
+                    }}
+                />
+                <FilterSelect
+                    title={"Etat"}
+                    options={columns?.etats.map((etat) => etat.text) ?? []}
+                    values={filters.etat}
+                    onChange={(values: string[]) => {
+                        var newFilters = new Filters({ ...filters, etat: values });
+                        setFilters(newFilters);
+                    }}
+                />
 
-                <div style={styles.singleFilterContainer}>
-                    <Select
-                        title={"Type d'activité"}
-                        options={columns?.types_activite?.map((type_activite) => type_activite.text) ?? []}
-                        value={filters.typeActivite}
-                        onChange={(value: string) => {
-                            var newFilters = new Filters({ ...filters, typeActivite: value });
-                            //applyFilters(elements, newFilters);
-                            setFilters(newFilters);
-                        }}
-                    />
-                </div>
-                <div style={styles.singleFilterContainer}>
-                    <Select
-                        title={"Politiques publiques"}
-                        options={
-                            columns?.politiques_publiques?.map((politique_publique) => politique_publique.text) ?? []
-                        }
-                        value={filters.politiquesPubliques}
-                        onChange={(value: string) => {
-                            var newFilters = new Filters({ ...filters, politiquesPubliques: value });
-                            //applyFilters(elements, newFilters);
-                            setFilters(newFilters);
-                        }}
-                    />
-                </div>
-                <div style={styles.singleFilterContainer}>
-                    <Select
-                        title={"Etat"}
-                        options={columns?.etats.map((etat) => etat.text) ?? []}
-                        value={filters.etat}
-                        onChange={(value: string) => {
-                            var newFilters = new Filters({ ...filters, etat: value });
-                            //applyFilters(elements, newFilters);
-                            setFilters(newFilters);
-                        }}
-                    />
-                </div>
             </>
         );
     };
