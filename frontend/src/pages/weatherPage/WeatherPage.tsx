@@ -10,10 +10,9 @@ import { AllProjectsHistory, DragElement, Filters, MenuMode, MenuOptions } from 
 import { styles } from "./WeatherStyle";
 
 interface Props {
-    setIsLoading: (isLoading: boolean) => void;
+
     onShowDetails: (projectId: string) => void;
     allProjects: Projet[];
-    filteredProjects: Projet[];
     setAllProjects: (projects: Projet[]) => void;
     refresh: number;
     filters: Filters;
@@ -23,7 +22,7 @@ interface Props {
 }
 
 export const WeatherPage = (props: Props) => {
-    const { setIsLoading, onShowDetails, allProjects, setAllProjects, filteredProjects, refresh, filters, setFilters, columns, setColumns } = props;
+    const { onShowDetails, allProjects, setAllProjects, refresh, filters, setFilters, columns, setColumns } = props;
     const [elements, setElements] = useState<DragElement[]>([]);
     const [allProjectsHistory, setAllProjectsHistory] = useState<AllProjectsHistory>(new AllProjectsHistory([]));
     const [menu, setMenu] = useState<string>(MenuOptions.FILTER);
@@ -33,7 +32,7 @@ export const WeatherPage = (props: Props) => {
     const [showAllLabels, setShowAllLabels] = useState<boolean>(false);
     const [elementsScale, setElementsScale] = useState<number>(1);
 
-    const chartProjects = filteredProjects.filter(
+    const chartProjects = allProjects.filter(
         (project) =>
             project.meteo_precise != null &&
             project.etape_precise != null
@@ -144,6 +143,7 @@ export const WeatherPage = (props: Props) => {
                         offsetY: 0,
                         active: false,
                         project: project,
+
                     });
                 }
             }
@@ -151,7 +151,8 @@ export const WeatherPage = (props: Props) => {
         } else {
             setElementAtThisDate(selectedDate);
         }
-    }, [refresh, filteredProjects, filters.mode]);
+
+    }, [refresh, filters]);
 
     const buildChart = () => {
         return (

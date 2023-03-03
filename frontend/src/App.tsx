@@ -186,10 +186,8 @@ const App = () => {
                         element={
                             <PrivateRoute>
                                 <WeatherPage
-                                    setIsLoading={setIsLoading}
                                     onShowDetails={showProjectDetails}
                                     allProjects={projects}
-                                    filteredProjects={filteredProjects}
                                     setAllProjects={setProjects}
                                     refresh={refresh}
                                     filters={filters}
