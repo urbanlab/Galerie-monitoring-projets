@@ -1,4 +1,4 @@
-import { ProjectHistory, Projet } from "../../models";
+import { ProjectHistoryItem, Projet } from "../../models";
 
 export interface DragElement {
     xNorm: number;
@@ -74,11 +74,11 @@ export class Filters {
 }
 
 export class AllProjectsHistory {
-    constructor(data: ProjectHistory[] = []) {
+    constructor(data: ProjectHistoryItem[] = []) {
         this.fullHistory = data;
         this.listOfDates = this.getListOfDates(data);
     }
-    fullHistory: ProjectHistory[];
+    fullHistory: ProjectHistoryItem[];
     listOfDates: string[];
 
     getProjectHistoryById(id: string, date?: string) {
@@ -111,7 +111,7 @@ export class AllProjectsHistory {
         return this.listOfDates[0];
     }
 
-    getListOfDates(data: ProjectHistory[]) {
+    getListOfDates(data: ProjectHistoryItem[]) {
         var distinctDates: string[] = [];
         for (var item of data) {
             if (!distinctDates.includes(item.date)) {
@@ -139,9 +139,9 @@ export class AllProjectsHistory {
 }
 
 export enum MenuOptions {
-    FILTER = "FILTRER",
-    EXPORT = "EXPORTER",
-    MODE = "MODE",
+    FILTER = "FILTRES",
+    OPTIONS = "OPTIONS",
+
 }
 
 export enum MenuMode {

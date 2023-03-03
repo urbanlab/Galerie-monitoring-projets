@@ -16,11 +16,12 @@ interface Props {
     menuRef: React.MutableRefObject<any>;
     sliderRef: React.MutableRefObject<any>;
     showAllLabels: boolean;
+    elementsScale: number;
 }
 
 export const WeatherChart = (props: Props) => {
     //chart container dimensions
-    const { columns, setElements, elements, onShowDetails, saveProject, mode, menuRef, sliderRef, showAllLabels } = props;
+    const { columns, setElements, elements, onShowDetails, saveProject, mode, menuRef, sliderRef, showAllLabels, elementsScale } = props;
 
     const [chartDimensions, setChartDimensions] = useState({ width: 0, height: 0 });
 
@@ -177,11 +178,11 @@ export const WeatherChart = (props: Props) => {
     };
 
     function handleResize() {
-        let height = window.innerHeight - menuRef.current?.clientHeight - 150
+        let height = window.innerHeight - menuRef.current?.clientHeight - 170
         if (mode == MenuMode.EVOLUTION) {
             height = height - sliderRef.current?.clientHeight
         }
-        let width = menuRef.current?.clientWidth
+        let width = menuRef.current?.clientWidth - styles.chartMargin;
         var newChartDimensions = {
             width: width,
             height: height,
@@ -262,6 +263,7 @@ export const WeatherChart = (props: Props) => {
                 onShowDetails={onShowDetails}
                 handlePointerDown={(i, e) => isDraggable && handlePointerDown(i, e)}
                 showAllLabels={showAllLabels}
+                elementsScale={elementsScale}
             />
         );
     });
@@ -272,6 +274,7 @@ export const WeatherChart = (props: Props) => {
             height={chartDimensions.height + styles.chartMargin}
             onPointerUp={(evt) => isDraggable && handlePointerUp(evt)}
             onPointerMove={(evt) => isDraggable && handlePointerMove(evt)}
+            overflow="visible"
         >
             <svg
                 overflow="visible"

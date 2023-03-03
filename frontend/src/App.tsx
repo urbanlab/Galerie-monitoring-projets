@@ -101,16 +101,6 @@ const App = () => {
         updateProjects();
     }, []);
 
-    /* =================== Sort projects =================== */
-    // const handleSort = (column: keyof Projet) => {
-    //     if (sortColumn === column) {
-    //         setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    //     } else {
-    //         setSortColumn(column);
-    //         setSortDirection("asc");
-    //     }
-    // };
-
     /* =================== Show project details =================== */
     function showProjectDetails(projectId: string) {
         setSelectedProjectId(projectId);
@@ -125,21 +115,6 @@ const App = () => {
         const fullFilter = (projet: Projet) => filters.isProjectVisible(projet) && filter(projet);
         setSelectedProjects(projects.filter(fullFilter));
     }
-
-    /* =================== Filter projects =================== */
-    // const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     setNameFilter(event.target.value);
-    // };
-    // const filteredProjects = projects.filter((projet) =>
-    //     projet.projet?.toLowerCase().includes(nameFilter.toLowerCase()),
-    // );
-    // const sortedProjects = [...filteredProjects]?.sort((a, b) => {
-    //     if (sortDirection === "asc") {
-    //         return (a[sortColumn] || 0) > (b[sortColumn] || 0) ? 1 : -1;
-    //     } else {
-    //         return (a[sortColumn] || 0) < (b[sortColumn] || 0) ? 1 : -1;
-    //     }
-    // });
 
     useEffect(() => {
         let newFilteredProjects = projects.filter((projet) => filters.isProjectVisible(projet));

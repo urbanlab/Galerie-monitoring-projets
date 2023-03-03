@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Modal, ProgressBar, Row, Stack } from "react-bootstrap";
 
-import { ProjectHistory, Projet } from "../../models";
+import { ProjectHistoryItem, Projet } from "../../models";
 import { privateQuery } from "../../services";
 
 import CustomBadge from "../../components/CustomBadge";
@@ -26,11 +26,11 @@ interface Props {
     It takes a Projet object as a prop.
 */
 const ProjectDetailsModal: React.FC<Props> = ({ project, onClose, setAllProjects, allProjects }) => {
-    const [projectHistory, setProjectHistory] = useState<ProjectHistory[]>([]);
+    const [projectHistory, setProjectHistory] = useState<ProjectHistoryItem[]>([]);
 
     async function getProjectHistory() {
         privateQuery("GET", `/project_history/${project.id}`, null)
-            .then((events: ProjectHistory[]) => {
+            .then((events: ProjectHistoryItem[]) => {
                 setProjectHistory(events);
             })
             .catch((err: any) => {
@@ -90,7 +90,7 @@ const ProjectDetailsModal: React.FC<Props> = ({ project, onClose, setAllProjects
                                                 className="col-md-3"
                                                 variant="primary"
                                                 now={project.etape_precise * 100}
-                                                // label={`${(project.etape_precise * 100).toFixed(0)}%`}
+                                            // label={`${(project.etape_precise * 100).toFixed(0)}%`}
                                             />
                                             <div className="ms-1 "> {(project.etape_precise * 100).toFixed(0)}%</div>
                                         </div>
@@ -179,11 +179,11 @@ const ProjectDetailsModal: React.FC<Props> = ({ project, onClose, setAllProjects
                                                     project.meteo_precise * 100 < 33
                                                         ? "danger"
                                                         : project.meteo_precise * 100 < 66
-                                                        ? "warning"
-                                                        : "success"
+                                                            ? "warning"
+                                                            : "success"
                                                 }
                                                 now={project.meteo_precise * 100}
-                                                // label={`${(project.meteo_precise * 100).toFixed(0)}%`}
+                                            // label={`${(project.meteo_precise * 100).toFixed(0)}%`}
                                             />
                                             <div className="ms-1 "> {(project.meteo_precise * 100).toFixed(0)}%</div>
                                         </div>

@@ -13,22 +13,23 @@ export const styles: any = {
         //marginLeft: chartMargin,
     },
     frame: frame,
-    filtersContainer: {
+    menuFrame: {
         ...frame,
         display: "flex",
         marginLeft: spacing,
         flex: 1,
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
-        padding: "0px 40px",
+        padding: "10px 20px",
         height: "6em",
     },
 
-    singleFilterContainer: {
+    menuElementContainer: {
         display: "flex",
-        flex: 1,
-        margin: '0px 10px',
+        flexDirection: "column",
+        height: '100%',
+        justifyContent: "flex-start",
+        margin: '0px 20px',
         textAlign: "start",
     },
 
@@ -65,8 +66,21 @@ export const styles: any = {
 
     sliderContainer: {
         ...frame,
-        marginLeft: chartMargin,
         alignItems: "flex-end",
+    },
 
-    }
+    menuTitle: {
+        fontSize: 16,
+        fontWeight: 600,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxLines: 1,
+        display: 'inline-block',
+        wordWrap: 'break-word',
+        height: 20,
+    },
+    formControlLabel: {
+        fontFamily: 'Montserrat',
+    },
+
 };
