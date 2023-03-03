@@ -3,7 +3,7 @@ export const styles: any = {
         boxShadow: "rgba(0, 0, 0, 0.5) 3px 3px 8px",
     },
     title: {
-        flex:1,
+        flex: 1,
         fontSize: "1em",
         fontWeight: "bold",
         textAlign: "left",
@@ -13,7 +13,7 @@ export const styles: any = {
         borderColor: "#cdcdcd",
     },
     chart: {
-        height: "32vh",
+        height: "calc(37vh - 4em)",
         width: "100%",
         backgroundcolor: "white",
     },

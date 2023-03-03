@@ -40,7 +40,7 @@ const MeteoCircleChart = ({ meteo, showProjectsTableModal }: Props) => {
     /* =================== Render =================== */
     return (
         <div className="d-flex flex-column ">
-            <div className="d-block m-auto" style={{ width: 0.2 * window.innerWidth, height: "30vh" }}>
+            <div className="d-block m-auto" style={{ width: 0.2 * window.innerWidth, height: "calc(37vh - 4em)" }}>
                 <ResponsiveCirclePacking
                     data={meteo}
                     margin={{ top: 0, right: 0, bottom: 0, left: 0 }}

@@ -57,7 +57,6 @@ const App = () => {
     const [filteredProjects, setFilteredProjects] = useState<Projet[]>([]);
     const [columns, setColumns] = useState<Columns>();
 
-
     const cachedProjects = () => {
         setIsLoading(true);
         privateQuery("GET", `/cached_projects`, null)
@@ -123,7 +122,8 @@ const App = () => {
     /* =================== Project table modal =================== */
     function showProjectsTableModal(title: string, filter: (projet: Projet) => boolean) {
         setProjectsTableModalTitle(title);
-        setSelectedProjects(projects.filter(filter));
+        const fullFilter = (projet: Projet) => filters.isProjectVisible(projet) && filter(projet);
+        setSelectedProjects(projects.filter(fullFilter));
     }
 
     /* =================== Filter projects =================== */
@@ -144,15 +144,9 @@ const App = () => {
     useEffect(() => {
         let newFilteredProjects = projects.filter((projet) => filters.isProjectVisible(projet));
         setFilteredProjects(newFilteredProjects);
+    }, [filters.typeActivite, filters.directeurOuReferentsProjet, filters.etat, filters.politiquesPubliques, projects]);
 
-    }, [filters.typeActivite, filters.directeurOuReferentsProjet, filters.etat, filters.politiquesPubliques, projects])
-
-    const filtersMenu = (<FiltersMenu
-        columns={columns}
-        filters={filters}
-        setFilters={setFilters}
-        projects={projects}
-    />)
+    const filtersMenu = <FiltersMenu columns={columns} filters={filters} setFilters={setFilters} projects={projects} />;
 
     /* =================== Render =================== */
     return (
@@ -238,7 +232,7 @@ const App = () => {
                         element={
                             <PrivateRoute>
                                 {filtersMenu}
-                                <div className="d-flex justify-content-center mt-5 m-auto">
+                                <div className="d-flex justify-content-center m-auto">
                                     <MyResponsiveCirclePacking
                                         projets={filteredProjects}
                                         showProjectsTableModal={showProjectsTableModal}

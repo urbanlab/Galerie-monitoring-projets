@@ -26,7 +26,12 @@ export const getDirecteursEtReferentsProjets = (projects: Projet[]) => {
     return directeursEtReferents;
 };
 
-export const buildFilters = (projects: Projet[], filters: Filters, columns: Columns | undefined, setFilters: (filters: Filters) => void) => {
+export const buildFilters = (
+    projects: Projet[],
+    filters: Filters,
+    columns: Columns | undefined,
+    setFilters: (filters: Filters) => void,
+) => {
     return (
         <>
             <FilterSelect
@@ -49,9 +54,7 @@ export const buildFilters = (projects: Projet[], filters: Filters, columns: Colu
             />
             <FilterSelect
                 title={"Politiques publiques"}
-                options={
-                    columns?.politiques_publiques?.map((politique_publique) => politique_publique.text) ?? []
-                }
+                options={columns?.politiques_publiques?.map((politique_publique) => politique_publique.text) ?? []}
                 values={filters.politiquesPubliques}
                 onChange={(values: string[]) => {
                     var newFilters = new Filters({ ...filters, politiquesPubliques: values });
@@ -67,7 +70,6 @@ export const buildFilters = (projects: Projet[], filters: Filters, columns: Colu
                     setFilters(newFilters);
                 }}
             />
-
         </>
     );
 };
@@ -75,7 +77,9 @@ export const buildFilters = (projects: Projet[], filters: Filters, columns: Colu
 export const FiltersMenu = (props: Props) => {
     const { projects, columns, filters, setFilters } = props;
 
-    return <div style={{ ...styles.menuContainer, padding: "20px 40px", alignItems: "center", maxHeight: '6em' }}>
-        {buildFilters(projects, filters, columns, setFilters)}
-    </div>
-}
+    return (
+        <div style={{ ...styles.menuContainer, padding: "20px 40px", alignItems: "center", maxHeight: "6em" }}>
+            {buildFilters(projects, filters, columns, setFilters)}
+        </div>
+    );
+};
