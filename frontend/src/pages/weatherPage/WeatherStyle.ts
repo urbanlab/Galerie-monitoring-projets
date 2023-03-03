@@ -10,11 +10,10 @@ export const styles: any = {
     menuContainer: {
         display: "flex",
         alignItems: "stretch",
-        marginLeft: chartMargin,
+        //marginLeft: chartMargin,
     },
     frame: frame,
     filtersContainer: {
-        ...frame,
         ...frame,
         display: "flex",
         marginLeft: spacing,
@@ -28,6 +27,9 @@ export const styles: any = {
 
     singleFilterContainer: {
         display: "flex",
+        flex: 1,
+        margin: '0px 10px',
+        textAlign: "start",
     },
 
     button: {
@@ -58,16 +60,12 @@ export const styles: any = {
 
     chartContainer: {
         marginTop: "1em",
-        //border: 'solid',
-        //border: 'solid',
         display: "flex",
-        //justifyContent: "flex-end",
     },
 
     sliderContainer: {
         ...frame,
         marginLeft: chartMargin,
-
         alignItems: "flex-end",
 
     }

@@ -1,35 +1,76 @@
-import Form from "react-bootstrap/Form";
+import { useRef, useState } from 'react';
+import Select from 'react-select';
+import { styles } from "../WeatherStyle";
+
+
+
 interface Props {
     title: string;
     all?: boolean;
     options: string[];
-    value: string;
-    onChange: (value: string) => void;
+    values: string[];
+    onChange: (values: string[]) => void;
 }
 
-export const Select = (props: Props) => {
-    const { title, all, options, value, onChange } = props;
+export const FilterSelect = (props: Props) => {
+    const { title, all, options, values, onChange } = props;
+    const [isFocused, setIsFocused] = useState(false);
+    const ref = useRef<React.RefAttributes<Select>>(null)
+
+    const selectOptions: any = options.map((option) => {
+        return {
+            value: option,
+            label: option,
+        };
+    });
+
+    const selectValues = values.map((value) => {
+        return {
+            value: value,
+            label: value,
+        };
+    });
 
     return (
-        <div className="d-flex flex-column align-items-start">
+        <div
+            className="d-flex flex-column align-items-start"
+            style={styles.singleFilterContainer}
+            onMouseEnter={() => setIsFocused(true)}
+            onMouseLeave={() => setIsFocused(false)}
+        >
             <h1 style={{ fontSize: 16, fontWeight: 600 }}>{title}</h1>
-            <Form.Control
-                as="select"
-                value={value}
-                onChange={(e) => {
-                    onChange(e.target.value);
-                }}
-                style={{ width: 200, padding: "2px 12px", fontSize: 14, borderRadius: 0 }}
-            >
-                {all || (all == undefined && <option value="all">L'ensemble</option>)}
-                {options.map((option, index) => {
-                    return (
-                        <option value={option} key={index}>
-                            {option}
-                        </option>
-                    );
-                })}
-            </Form.Control>
+            <div style={{ width: '100%' }}>
+                <Select
+
+                    defaultValue={selectValues}
+                    isMulti
+                    onChange={(selection) => {
+                        onChange(selection.map((item: any) => item.value))
+                        setIsFocused(false)
+                    }}
+                    options={selectOptions}
+                    placeholder="L'ensemble"
+
+
+                    styles={{
+                        control: (baseStyles, state) => ({
+                            ...baseStyles,
+                            borderRadius: 0,
+                            height: isFocused ? 'auto' : 36,
+                            overflow: isFocused ? 'visible' : 'hidden',
+
+                        }),
+
+                        indicatorsContainer: (baseStyles, state) => ({
+                            ...baseStyles,
+                            height: isFocused ? 'auto' : 36,
+                        })
+                    }}
+
+                />
+
+            </div>
+
         </div>
     );
 };

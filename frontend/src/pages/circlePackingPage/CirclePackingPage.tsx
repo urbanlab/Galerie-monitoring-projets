@@ -53,7 +53,7 @@ const MyResponsiveCirclePacking = ({ projets, showProjectsTableModal }: Props) =
     return (
         <div>
             <div className="d-flex flex-column">
-                <div className="d-flex justify-content-center col-4 m-auto mb-3">
+                <div className="d-flex justify-content-center col-4 m-auto">
                     <Form.Select
                         value={displayed_property}
                         // Hard codé mais j'arrive pa a faire différemment avec typescript :
@@ -70,12 +70,18 @@ const MyResponsiveCirclePacking = ({ projets, showProjectsTableModal }: Props) =
                         <option value="etape">Étapes</option>
                         <option value="besoins_lab">Besoins lab</option>
                     </Form.Select>
+                    <Button
+                        className="ms-2 m-auto"
+                        size="sm"
+                        variant="outline-secondary"
+                        onClick={() => handleExport("CirclePage", "CirclePage")}
+                        style={{ height: "2.5em", width: "3em" }}
+                    >
+                        <FontAwesomeIcon icon={faDownload} />
+                    </Button>
                 </div>
 
-                <div
-                    className="CirclePage"
-                    style={{ width: 0.8 * window.innerWidth, height: 0.8 * window.innerHeight }}
-                >
+                <div className="CirclePage" style={{ width: 0.8 * window.innerWidth, height: "calc(90vh - 8em)" }}>
                     <ResponsiveCirclePacking
                         data={formatData(projets, displayed_property)}
                         margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
@@ -114,11 +120,7 @@ const MyResponsiveCirclePacking = ({ projets, showProjectsTableModal }: Props) =
                     />
                 </div>
             </div>
-            <Button variant="secondary" onClick={() => handleExport("CirclePage", "CirclePage")}>
-                <FontAwesomeIcon icon={faDownload} /> Exporter
-            </Button>
         </div>
-
     );
 };
 
