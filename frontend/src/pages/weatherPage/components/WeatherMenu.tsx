@@ -1,7 +1,5 @@
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Checkbox, FormControl, FormControlLabel, Radio, RadioGroup, Slider, Typography } from "@mui/material";
-import { Button } from "react-bootstrap";
+import DownloadButton from "../../../components/DownloadButton";
 import { buildFilters } from "../../../components/FiltersMenu";
 import { Columns, Projet } from "../../../models";
 import { Filters, MenuMode, MenuOptions } from "../weatherModels";
@@ -15,7 +13,7 @@ interface Props {
     menuRef: React.MutableRefObject<any>;
     filters: Filters;
     setFilters: (filters: Filters) => void;
-    handleExport: () => void;
+    handleExportWeather: (type: string) => void;
     setShowAllLabels: (showAllLabels: boolean) => void;
     elementsScale: number;
     setElementsScale: (elementsSize: number) => void;
@@ -30,7 +28,7 @@ export const WeatherMenu = (props: Props) => {
         columns,
         filters,
         setFilters,
-        handleExport,
+        handleExportWeather,
         setShowAllLabels,
         elementsScale,
         setElementsScale,
@@ -62,12 +60,8 @@ export const WeatherMenu = (props: Props) => {
         return (
             <div style={styles.menuElementContainer}>
                 <h1 style={styles.menuTitle}>Exporter</h1>
-                <Button variant="secondary" onClick={handleExport}>
-                    <FontAwesomeIcon icon={faDownload} /> SVG
-                </Button>
-
+                <DownloadButton svg={menuRef.current} fileName="weather" handleExportWeather={handleExportWeather} />
             </div>
-
         );
     };
 
@@ -87,16 +81,16 @@ export const WeatherMenu = (props: Props) => {
                         <FormControlLabel
                             value={MenuMode.EDITION}
                             control={<Radio />}
-                            label={<Typography style={styles.formControlLabel}>Edition</Typography>} />
+                            label={<Typography style={styles.formControlLabel}>Edition</Typography>}
+                        />
                         <FormControlLabel
                             value={MenuMode.EVOLUTION}
                             control={<Radio />}
-                            label={<Typography style={styles.formControlLabel}>Evolution</Typography>} />
+                            label={<Typography style={styles.formControlLabel}>Evolution</Typography>}
+                        />
                     </RadioGroup>
                 </FormControl>
-
             </div>
-
         );
     };
 
@@ -110,14 +104,14 @@ export const WeatherMenu = (props: Props) => {
                 <FormControl>
                     <FormControlLabel
                         control={<Checkbox onChange={onChange} />}
-                        label={<Typography style={styles.formControlLabel}>Afficher les labels</Typography>} />
+                        label={<Typography style={styles.formControlLabel}>Afficher les labels</Typography>}
+                    />
                 </FormControl>
             </div>
         );
     };
 
     const buildIconsSizeSlider = () => {
-
         const onChange = (event: any, value: any) => {
             setElementsScale(value);
         };
@@ -131,7 +125,7 @@ export const WeatherMenu = (props: Props) => {
                     aria-labelledby="discrete-slider"
                     valueLabelDisplay="auto"
                     valueLabelFormat={(value) => `x ${value}`}
-                    step={.1}
+                    step={0.1}
                     min={0.5}
                     max={2}
                 />
@@ -139,20 +133,16 @@ export const WeatherMenu = (props: Props) => {
         );
     };
 
-
-
     const buildOptions = () => {
         return (
-            < >
+            <>
                 {buildModeSelector()}
                 {buildShowLabels()}
                 {buildIconsSizeSlider()}
                 {buildExportButton()}
-
             </>
         );
-    }
-
+    };
 
     const buildMenu = () => {
         const content = () => {
@@ -160,7 +150,7 @@ export const WeatherMenu = (props: Props) => {
                 case MenuOptions.FILTER:
                     return buildFilters(chartProjects, filters, columns, setFilters);
                 case MenuOptions.OPTIONS:
-                    return buildOptions()
+                    return buildOptions();
                 default:
                     return <></>;
             }

@@ -1,15 +1,12 @@
 // install (please make sure versions match peerDependencies)
 // yarn add @nivo/core @nivo/circle-packing
 
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CirclePackingSvgProps, ResponsiveCirclePacking } from "@nivo/circle-packing";
 import { useState } from "react";
-import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import DownloadButton from "../../components/DownloadButton";
 import { ColoredText, Projet } from "../../models";
 import getBgColorByName from "../../utils/colors";
-import { exportAsSVG } from "../../utils/export";
 import { augmentSaturation, formatData } from "./circlePackingDataFormat";
 
 interface Props {
@@ -44,9 +41,9 @@ const MyResponsiveCirclePacking = ({ projets, showProjectsTableModal }: Props) =
         });
     };
 
-    function handleExport(className: string, fileName: string) {
+    function selectSvg(className: String) {
         const svg: any = document.querySelector(`.${className} svg`);
-        exportAsSVG(svg, fileName);
+        return svg;
     }
 
     /* =================== Render =================== */
@@ -70,15 +67,9 @@ const MyResponsiveCirclePacking = ({ projets, showProjectsTableModal }: Props) =
                         <option value="etape">Étapes</option>
                         <option value="besoins_lab">Besoins lab</option>
                     </Form.Select>
-                    <Button
-                        className="ms-2 m-auto"
-                        size="sm"
-                        variant="outline-secondary"
-                        onClick={() => handleExport("CirclePage", "CirclePage")}
-                        style={{ height: "2.5em", width: "3em" }}
-                    >
-                        <FontAwesomeIcon icon={faDownload} />
-                    </Button>
+                    <div className="ms-1">
+                        <DownloadButton svg={selectSvg("CirclePage")} fileName="CirclePage" />
+                    </div>
                 </div>
 
                 <div className="CirclePage" style={{ width: 0.8 * window.innerWidth, height: "calc(90vh - 8em)" }}>

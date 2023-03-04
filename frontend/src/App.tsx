@@ -63,7 +63,6 @@ const App = () => {
             .then((events: Projet[]) => {
                 setProjects(events);
                 setRefresh(1);
-                //console.log(events)
             })
             .catch((err: any) => {
                 console.log(err);

@@ -1,10 +1,8 @@
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
+import DownloadButton from "../../components/DownloadButton";
 import { Columns, Projet } from "../../models";
 import { privateQuery } from "../../services";
-import { exportAsSVG } from "../../utils/export";
 import BarChartBudget from "./components/BarChartBudget";
 import BarChart from "./components/BarChartSteps";
 import MeteoCircleChart from "./components/MeteoCircleChart";
@@ -37,6 +35,13 @@ const formatMeteo = (projets: Projet[]) => {
                 };
             }) ?? [],
     };
+    if (meteoFormatted.children.length === 0) {
+        // if no meteo is defined, in order to prevent load error, we add a fake meteo
+        meteoFormatted.children.push({
+            name: "☀️",
+            loc: 1,
+        });
+    }
     return meteoFormatted;
 };
 
@@ -44,10 +49,9 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
     const [columns, setColumns] = useState<Columns>();
     const [meteoFormatted, setMeteoFormatted] = useState<any>(formatMeteo(projets));
 
-
-    function handleExport(className: string, fileName: string) {
+    function selectSvg(className: string) {
         const svg: any = document.querySelector(`.${className} svg`);
-        exportAsSVG(svg, fileName);
+        return svg;
     }
 
     async function getColumns() {
@@ -74,18 +78,12 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
             <Container fluid>
                 <Row className="mx-5 mb-1">
                     <Col md={8} className="ps-5 pe-3 pb-4">
-
                         <div className="p-2 bg-light" style={styles.shadow}>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <p style={styles.title} className="m-2">
                                     Nombre des projets selon l'étape
                                 </p>
-                                <Button
-                                    variant="outline-secondary"
-                                    onClick={() => handleExport("barchart", "BarChart")}
-                                >
-                                    <FontAwesomeIcon icon={faDownload} />
-                                </Button>
+                                <DownloadButton svg={selectSvg("barchart")} fileName="BarChart" />
                             </div>
                             <div style={styles.chart} className="barchart">
                                 <BarChart
@@ -102,12 +100,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                                 <p style={styles.title} className="m-2">
                                     Méteo
                                 </p>
-                                <Button
-                                    variant="outline-secondary"
-                                    onClick={() => handleExport("MeteoCircle", "MeteoCircleChart")}
-                                >
-                                    <FontAwesomeIcon icon={faDownload} />
-                                </Button>
+                                <DownloadButton svg={selectSvg("MeteoCircle")} fileName="MeteoCircleChart" />
                             </div>
                             <div style={styles.chart} className="MeteoCircle">
                                 <MeteoCircleChart
@@ -125,12 +118,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                                 <p style={styles.title} className="m-2">
                                     Budget par type d'activité
                                 </p>
-                                <Button
-                                    variant="outline-secondary"
-                                    onClick={() => handleExport("BudgetBarChart", "BudgetBarChart")}
-                                >
-                                    <FontAwesomeIcon icon={faDownload} />
-                                </Button>
+                                <DownloadButton svg={selectSvg("BudgetBarChart")} fileName="BudgetBarChart" />
                             </div>
                             <div style={{ ...styles.chart }} className="BudgetBarChart">
                                 <BarChartBudget projects={projets}></BarChartBudget>
@@ -144,12 +132,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                                 <p style={styles.title} className="m-2">
                                     Status des projets
                                 </p>
-                                <Button
-                                    variant="outline-secondary"
-                                    onClick={() => handleExport("PieChart", "PieChart")}
-                                >
-                                    <FontAwesomeIcon icon={faDownload} />
-                                </Button>
+                                <DownloadButton svg={selectSvg("PieChart")} fileName="PieChart" />
                             </div>
                             <div style={styles.chart} className="PieChart">
                                 <PieChart

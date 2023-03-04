@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Columns, ProjectHistoryItem, Projet } from "../../models";
 import { privateQuery } from "../../services";
-import { exportAsSVG } from "../../utils/export";
+import { exportAsPNG, exportAsSVG } from "../../utils/export";
 import { AnimateElements } from "./components/AnimateElements";
 import { TimeSlider } from "./components/TimeSlider";
 import { WeatherChart } from "./components/WeatherChart";
@@ -10,7 +10,6 @@ import { AllProjectsHistory, DragElement, Filters, MenuMode, MenuOptions } from 
 import { styles } from "./WeatherStyle";
 
 interface Props {
-
     onShowDetails: (projectId: string) => void;
     allProjects: Projet[];
     setAllProjects: (projects: Projet[]) => void;
@@ -33,9 +32,7 @@ export const WeatherPage = (props: Props) => {
     const [elementsScale, setElementsScale] = useState<number>(1);
 
     const chartProjects = allProjects.filter(
-        (project) =>
-            project.meteo_precise != null &&
-            project.etape_precise != null
+        (project) => project.meteo_precise != null && project.etape_precise != null,
     );
 
     async function updateProject(projectId: string) {
@@ -78,7 +75,7 @@ export const WeatherPage = (props: Props) => {
             });
     }
 
-    function handleExport() {
+    function handleExportWeather(type: string) {
         //fonction qui exporte le svg
         const svg: any = document.querySelector(".weatherChart svg");
         let date = new Date().toISOString().slice(0, 10);
@@ -91,13 +88,14 @@ export const WeatherPage = (props: Props) => {
             //si les labels sont désactivés, on les affiche pour l'export puis on les désactive après
             setShowAllLabels(true);
             setTimeout(() => {
-                exportAsSVG(svg, fileName);
+                if (type == "png") exportAsPNG(svg, fileName);
+                else exportAsSVG(svg, fileName);
                 setShowAllLabels(false);
             }, 100);
-        }
-        else {
+        } else {
             //si les labels sont activés, on exporte directement
-            exportAsSVG(svg, fileName);
+            if (type == "png") exportAsPNG(svg, fileName);
+            else exportAsSVG(svg, fileName);
         }
     }
 
@@ -106,7 +104,10 @@ export const WeatherPage = (props: Props) => {
     const setElementAtThisDate = (date: string) => {
         var endElements: DragElement[] = [];
         //si c'est la date du jour, on affiche les mêmes projets que dans le mode édition pour pas refaire une requete pour mettre à jour allProjectsHistory
-        var projectsList = date == new Date().toISOString().slice(0, 10) ? chartProjects : allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date)
+        var projectsList =
+            date == new Date().toISOString().slice(0, 10)
+                ? chartProjects
+                : allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date);
 
         for (var project of projectsList) {
             if (filters.isProjectVisible(project)) {
@@ -143,7 +144,6 @@ export const WeatherPage = (props: Props) => {
                         offsetY: 0,
                         active: false,
                         project: project,
-
                     });
                 }
             }
@@ -151,12 +151,11 @@ export const WeatherPage = (props: Props) => {
         } else {
             setElementAtThisDate(selectedDate);
         }
-
     }, [refresh, filters]);
 
     const buildChart = () => {
         return (
-            <div style={styles.chartContainer} className='weatherChart'>
+            <div style={styles.chartContainer} className="weatherChart">
                 <WeatherChart
                     columns={columns}
                     elements={elements}
@@ -181,7 +180,7 @@ export const WeatherPage = (props: Props) => {
                 filters={filters}
                 chartProjects={allProjects}
                 columns={columns}
-                handleExport={handleExport}
+                handleExportWeather={handleExportWeather}
                 menu={menu}
                 setMenu={setMenu}
                 setShowAllLabels={setShowAllLabels}
@@ -192,10 +191,7 @@ export const WeatherPage = (props: Props) => {
             {buildChart()}
             {filters.mode == MenuMode.EVOLUTION && (
                 <div className="d-flex" style={styles.sliderContainer} ref={sliderRef}>
-                    <TimeSlider
-                        allProjectsHistory={allProjectsHistory}
-                        onChange={setSelectedDate}
-                    />
+                    <TimeSlider allProjectsHistory={allProjectsHistory} onChange={setSelectedDate} />
                 </div>
             )}
         </div>
