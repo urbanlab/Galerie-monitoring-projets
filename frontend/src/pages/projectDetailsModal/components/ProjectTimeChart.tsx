@@ -7,17 +7,17 @@ import {
     PointElement,
     TimeScale,
     Title,
-    Tooltip,
+    Tooltip
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
 
-import { ProjectHistory } from "../../../models";
+import { ProjectHistoryItem } from "../../../models";
 
 ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend);
 
 interface Props {
-    projectHistory: ProjectHistory[];
+    projectHistory: ProjectHistoryItem[];
     type: "meteo" | "etape";
 }
 
@@ -49,7 +49,7 @@ export const getDateFormat = (dateUnit: string) => {
         case "week":
             return "dd/MM";
         case "month":
-            return "MMM yyyy";
+            return "MMM";
         case "year":
             return "yyyy";
         default:
@@ -59,7 +59,7 @@ export const getDateFormat = (dateUnit: string) => {
 
 export const ProjectTimeChart = (props: Props) => {
     const { projectHistory, type } = props;
-    const mockData: ProjectHistory[] = [
+    const mockData: ProjectHistoryItem[] = [
         {
             date: "2023-02-16",
             etape_precise: 0.2,
@@ -253,30 +253,35 @@ export const ProjectTimeChart = (props: Props) => {
             project_id: "ae40b2a6-752a-419f-98be-a0c95437fac2",
         },
     ];
-    const data: ProjectHistory[] = projectHistory.sort(
+    const data: ProjectHistoryItem[] = mockData.sort(
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
+    //unité de temps (jour, mois, année...)
     const unit = getDateUnit(new Date(data[0].date), new Date(data[data.length - 1].date));
+    //format de date (dd/mm/yyyy, MM, yyyy)
     const format = getDateFormat(unit);
-    const labels = data.map((history: ProjectHistory) => history.date);
+    //axe des abscisses: toutes les dates
+    const labels = data.map((history: ProjectHistoryItem) => history.date);
     const chartData = {
+        //axe des ordonnées: pourcentage météo
         meteo: {
             labels,
             datasets: [
                 {
                     fill: true,
-                    data: data.map((project) => project.meteo_precise),
+                    data: data.map((project) => project.meteo_precise * 100),
                     borderColor: "rgb(255, 99, 132)",
                     backgroundColor: "rgba(255, 99, 132, 0.5)",
                 },
             ],
         },
+        //axe des ordonnées: pourcentage étape
         etape: {
             labels,
             datasets: [
                 {
                     fill: true,
-                    data: data.map((project) => project.etape_precise),
+                    data: data.map((project) => project.etape_precise * 100),
                     borderColor: "rgb(53, 162, 235)",
                     backgroundColor: "rgba(53, 162, 235, 0.5)",
                 },
@@ -293,7 +298,7 @@ export const ProjectTimeChart = (props: Props) => {
             },
             title: {
                 display: true,
-                text: type == "meteo" ? "MÉTÉO" : "AVANCEMENT",
+                text: type == "meteo" ? "MÉTÉO" : "ÉTAPE",
             },
         },
         scales: {
@@ -306,17 +311,21 @@ export const ProjectTimeChart = (props: Props) => {
                         [unit]: format,
                     },
                 },
-                ticks: {
-                    display: true,
-                },
-                gridLines: {
-                    display: false,
-                },
+
             },
             y: {
                 display: true,
+                title: {
+                    display: true,
+                    text: type == "meteo" ? "Pourcentage météo" : "Pourcentage d'avancement",
+                },
+                ticks: {
+                    callback: function (value: any) {
+                        return value + "%";
+                    },
+                },
                 min: 0,
-                max: 1,
+                max: 100,
             },
         },
     };

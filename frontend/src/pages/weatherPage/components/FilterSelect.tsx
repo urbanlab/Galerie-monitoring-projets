@@ -33,16 +33,16 @@ export const FilterSelect = (props: Props) => {
 
     return (
         <div
-            className="d-flex flex-column align-items-start"
-            style={styles.singleFilterContainer}
+
+            style={{ ...styles.menuElementContainer, flex: 1 }}
             onMouseEnter={() => setIsFocused(true)}
             onMouseLeave={() => setIsFocused(false)}
         >
-            <h1 style={{ fontSize: 16, fontWeight: 600 }}>{title}</h1>
+            <h1 style={styles.menuTitle}>{title}</h1>
             <div style={{ width: '100%' }}>
                 <Select
 
-                    defaultValue={selectValues}
+                    value={selectValues}
                     isMulti
                     onChange={(selection) => {
                         onChange(selection.map((item: any) => item.value))

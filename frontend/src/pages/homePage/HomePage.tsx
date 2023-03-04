@@ -44,6 +44,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
     const [columns, setColumns] = useState<Columns>();
     const [meteoFormatted, setMeteoFormatted] = useState<any>(formatMeteo(projets));
 
+
     function handleExport(className: string, fileName: string) {
         const svg: any = document.querySelector(`.${className} svg`);
         exportAsSVG(svg, fileName);
@@ -72,7 +73,8 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
         <div className="col-xl-10 col-lg-12 mx-auto text-center">
             <Container fluid>
                 <Row className="mx-5 mb-1">
-                    <Col md={8} className="ps-5 pe-3 pt-2 pb-3">
+                    <Col md={8} className="ps-5 pe-3 pb-4">
+
                         <div className="p-2 bg-light" style={styles.shadow}>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <p style={styles.title} className="m-2">
@@ -94,7 +96,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                             </div>
                         </div>
                     </Col>
-                    <Col md={4} className="ps-3 pe-5 pt-2 pb-3">
+                    <Col md={4} className="ps-3 pe-5 pb-4">
                         <div className="p-2 bg-light" style={styles.shadow}>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <p style={styles.title} className="m-2">

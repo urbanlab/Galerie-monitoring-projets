@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Columns, ProjectHistory, Projet } from "../../models";
+import { Columns, ProjectHistoryItem, Projet } from "../../models";
 import { privateQuery } from "../../services";
 import { exportAsSVG } from "../../utils/export";
 import { AnimateElements } from "./components/AnimateElements";
@@ -10,10 +10,9 @@ import { AllProjectsHistory, DragElement, Filters, MenuMode, MenuOptions } from 
 import { styles } from "./WeatherStyle";
 
 interface Props {
-    setIsLoading: (isLoading: boolean) => void;
+
     onShowDetails: (projectId: string) => void;
     allProjects: Projet[];
-    filteredProjects: Projet[];
     setAllProjects: (projects: Projet[]) => void;
     refresh: number;
     filters: Filters;
@@ -23,7 +22,7 @@ interface Props {
 }
 
 export const WeatherPage = (props: Props) => {
-    const { setIsLoading, onShowDetails, allProjects, setAllProjects, filteredProjects, refresh, filters, setFilters, columns, setColumns } = props;
+    const { onShowDetails, allProjects, setAllProjects, refresh, filters, setFilters, columns, setColumns } = props;
     const [elements, setElements] = useState<DragElement[]>([]);
     const [allProjectsHistory, setAllProjectsHistory] = useState<AllProjectsHistory>(new AllProjectsHistory([]));
     const [menu, setMenu] = useState<string>(MenuOptions.FILTER);
@@ -31,20 +30,23 @@ export const WeatherPage = (props: Props) => {
     const sliderRef = useRef<any>(null);
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
     const [showAllLabels, setShowAllLabels] = useState<boolean>(false);
+    const [elementsScale, setElementsScale] = useState<number>(1);
 
-    const chartProjects = filteredProjects.filter(
+    const chartProjects = allProjects.filter(
         (project) =>
             project.meteo_precise != null &&
             project.etape_precise != null
     );
 
     async function updateProject(projectId: string) {
+        //fonction qui met à jour un projet
         privateQuery("GET", `/project/${projectId}`, null)
             .then((updatedProject: Projet) => {
                 var newProjects = allProjects.map((project) =>
                     project.id === updatedProject.id ? updatedProject : project,
                 );
                 setAllProjects(newProjects);
+                getAllProjectsHistory();
             })
             .catch((err: any) => {
                 console.log(err);
@@ -52,8 +54,9 @@ export const WeatherPage = (props: Props) => {
     }
 
     async function getAllProjectsHistory() {
+        //fonction qui récupère l'historique des projets
         privateQuery("GET", `/all_projects_history`, null)
-            .then((events: ProjectHistory[]) => {
+            .then((events: ProjectHistoryItem[]) => {
                 setAllProjectsHistory(new AllProjectsHistory(events));
             })
             .catch((err: any) => {
@@ -62,6 +65,7 @@ export const WeatherPage = (props: Props) => {
     }
 
     async function saveProject(projectId: string, etapePrecise: number, meteoPrecise: number) {
+        //fonction qui sauvegarde les données météo et étape précise d'un projet
         privateQuery("POST", `/update_etape_meteo/${projectId}`, {
             etape_precise: etapePrecise,
             meteo_precise: meteoPrecise,
@@ -75,6 +79,7 @@ export const WeatherPage = (props: Props) => {
     }
 
     function handleExport() {
+        //fonction qui exporte le svg
         const svg: any = document.querySelector(".weatherChart svg");
         let date = new Date().toISOString().slice(0, 10);
 
@@ -82,17 +87,22 @@ export const WeatherPage = (props: Props) => {
             date = selectedDate;
         }
         let fileName = `meteo_${date}`;
-        setShowAllLabels(true);
-        setTimeout(() => {
+        if (!showAllLabels) {
+            //si les labels sont désactivés, on les affiche pour l'export puis on les désactive après
+            setShowAllLabels(true);
+            setTimeout(() => {
+                exportAsSVG(svg, fileName);
+                setShowAllLabels(false);
+            }, 100);
+        }
+        else {
+            //si les labels sont activés, on exporte directement
             exportAsSVG(svg, fileName);
-            setShowAllLabels(false);
-        }, 100);
-
-        //setShowAllLabels(false);
+        }
     }
 
-
     const startAnimation = AnimateElements(setElements);
+
     const setElementAtThisDate = (date: string) => {
         var endElements: DragElement[] = [];
         //si c'est la date du jour, on affiche les mêmes projets que dans le mode édition pour pas refaire une requete pour mettre à jour allProjectsHistory
@@ -133,6 +143,7 @@ export const WeatherPage = (props: Props) => {
                         offsetY: 0,
                         active: false,
                         project: project,
+
                     });
                 }
             }
@@ -140,7 +151,8 @@ export const WeatherPage = (props: Props) => {
         } else {
             setElementAtThisDate(selectedDate);
         }
-    }, [refresh, filteredProjects, filters.mode]);
+
+    }, [refresh, filters]);
 
     const buildChart = () => {
         return (
@@ -155,6 +167,7 @@ export const WeatherPage = (props: Props) => {
                     menuRef={menuRef}
                     sliderRef={sliderRef}
                     showAllLabels={showAllLabels}
+                    elementsScale={elementsScale}
                 />
             </div>
         );
@@ -171,6 +184,9 @@ export const WeatherPage = (props: Props) => {
                 handleExport={handleExport}
                 menu={menu}
                 setMenu={setMenu}
+                setShowAllLabels={setShowAllLabels}
+                elementsScale={elementsScale}
+                setElementsScale={setElementsScale}
             />
 
             {buildChart()}

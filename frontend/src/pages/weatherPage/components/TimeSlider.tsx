@@ -27,11 +27,11 @@ export function TimeSlider(props: Props) {
                     },
                     thumb: {
                         height: 24,
-                        width: 48,
+                        width: 24,
                         backgroundColor: "#fff",
                         border: "2px solid currentColor",
                         marginTop: 0,
-                        borderRadius: 0,
+                        borderRadius: 14,
                         boxShadow: "0px 1px 3px 0px rgba(0,0,0,0.3)",
                         marginLeft: 0,
                         "&:focus, &:hover, &$active": {
@@ -40,7 +40,7 @@ export function TimeSlider(props: Props) {
                     },
                     track: {
                         height: 8,
-                        borderRadius: 0,
+                        borderRadius: 4,
                     },
                     valueLabel: {
                         color: "#404040",
@@ -51,10 +51,11 @@ export function TimeSlider(props: Props) {
                     },
                     rail: {
                         height: 12,
-                        borderRadius: 0,
+                        borderRadius: 6,
                     },
                     markLabel: {
                         color: "#404040",
+                        fontFamily: "Montserrat, sans-serif",
                         fontSize: 14,
                         fontWeight: 600,
                     },

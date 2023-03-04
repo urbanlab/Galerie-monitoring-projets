@@ -53,7 +53,7 @@ export interface Columns {
     besoins_lab: ColoredText[];
 }
 
-export interface ProjectHistory {
+export interface ProjectHistoryItem {
     project_id: string;
     date: string;
     etape_precise: number;

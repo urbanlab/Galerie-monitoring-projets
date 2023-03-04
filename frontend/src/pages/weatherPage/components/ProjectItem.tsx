@@ -9,11 +9,12 @@ interface Props {
     onShowDetails: (projectId: string) => void;
     handlePointerDown: (index1: number, e: React.PointerEvent<SVGElement>) => void;
     showAllLabels: boolean;
+    elementsScale: number;
 }
 
 export const ProjectItem = (props: Props) => {
-    const { item, index, chartDimensions, onShowDetails, handlePointerDown, showAllLabels } = props;
-    const radius = Math.min(Math.max(chartDimensions.width, chartDimensions.height) / 50, 25);
+    const { item, index, chartDimensions, onShowDetails, handlePointerDown, showAllLabels, elementsScale } = props;
+    const radius = elementsScale * Math.min(Math.max(chartDimensions.width, chartDimensions.height) / 50, 25);
     const xCoord = item.xNorm * chartDimensions.width;
     const yCoord = item.yNorm * chartDimensions.height;
     const labelWidth = Math.max(100, Math.min(300, 8 * radius));
@@ -139,12 +140,24 @@ export const ProjectItem = (props: Props) => {
         />
     );
 
+    const onMouseEnter = () => {
+        if (!showAllLabels) {
+            setShowLabel(true);
+        }
+    };
+
+    const onMouseLeave = () => {
+        if (!showAllLabels) {
+            setShowLabel(false);
+        }
+    };
+
     var svg = (
         <svg
             overflow="visible"
             opacity={item.opacity}
-            onMouseEnter={(_) => setShowLabel(true)}
-            onMouseLeave={(_) => setShowLabel(false)}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
         >
             {label}
             {toolTip}
