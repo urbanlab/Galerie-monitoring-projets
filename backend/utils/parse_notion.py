@@ -30,10 +30,10 @@ def parse_notion_page(page: Raw_Notion_Page) -> Projet:
         if page["icon"]
         else None,
         type_activite=colored_text(
-            text=prop["Type d'activité"]["select"]["name"],
-            color=prop["Type d'activité"]["select"]["color"],
+            text=prop["Typologie d'activité"]["select"]["name"],
+            color=prop["Typologie d'activité"]["select"]["color"],
         )
-        if prop["Type d'activité"]["select"]
+        if prop["Typologie d'activité"]["select"]
         else None,
         objet=prop["Objet"]["rich_text"][0]["plain_text"] if prop["Objet"]["rich_text"] else None,
         etat=colored_text(
@@ -147,9 +147,9 @@ def parse_notion_columns(page: Raw_Notion_Page) -> Columns:
                 text=option["name"],
                 color=option["color"],
             )
-            for option in prop["Type d'activité"]["select"]["options"]
+            for option in prop["Typologie d'activité"]["select"]["options"]
         ]
-        if prop["Type d'activité"]["select"]["options"]
+        if prop["Typologie d'activité"]["select"]["options"]
         else [],
         etats=[
             colored_text(

@@ -1,5 +1,6 @@
 import random
 from pprint import pprint
+from typing import Dict, List
 
 import aiohttp
 from schemas import Columns, Projet, Raw_Notion_Page, colored_text
@@ -307,16 +308,16 @@ class APINotion:
             # If etape and no etape_precise, set etape_precise
             if project.etape and not project.etape_precise:
                 # get etape value and set etape_precise
-                etape: colored_text = project.etape
+                etape: List[colored_text] = project.etape
                 for i in range(len(columns.etapes)):
                     if etape[-1]["text"] == columns.etapes[i]["text"]:
-                        etape_precise = (i + 1) / len(columns.etapes) * random.random()
+                        etape_precise = i / len(columns.etapes) + (1 / len(columns.etapes)) * random.random()
                         break
 
             # update project in notion according to the values
             if project.meteo and project.etape and not project.meteo_precise and not project.etape_precise:
-                await self.update_etape_meteo(project.id, etape_precise, meteo_precise)
+                await self.update_etape_meteo(project.id, etape_precise, meteo_precise, projects)
             elif project.meteo and not project.meteo_precise:
-                await self.update_meteo(project.id, meteo_precise)
+                await self.update_meteo(project.id, meteo_precise, projects)
             elif project.etape and not project.etape_precise:
-                await self.update_etape(project.id, etape_precise)
+                await self.update_etape(project.id, etape_precise, projects)
