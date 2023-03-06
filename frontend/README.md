@@ -87,9 +87,10 @@ La page de détails d'un projet permet à l'utilisateur de visualiser les inform
 
 La page liste des projets permet à l'utilisateur de visualiser la liste des projets.
 
-### Page Méteo / Avancement
+### Page Météo / Avancement
 
 La page Méteo / Avancement permet à l'utilisateur de visualiser les informations sur la météo et l'avancement des projets. Elle permet aussi me déplacer les projets sur les deux axes (Météo et Avancement).
+
 
 ### Page circle Charts
 

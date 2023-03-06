@@ -22,6 +22,7 @@ export const ProjectItem = (props: Props) => {
     const [showLabel, setShowLabel] = useState(false);
 
     useEffect(() => {
+        //si on doit afficher tous les labels, on affiche le label
         if (showAllLabels) {
             setShowLabel(true);
         } else {
@@ -32,6 +33,7 @@ export const ProjectItem = (props: Props) => {
 
 
     const buildLogo = () => {
+        //fonction qui construit le logo du projet (icone, image ou emoji)
         let icon;
         if (item.project.icon?.type === "emoji" || item.project.icon?.type == null) {
             icon = <span style={{ fontSize: 1.2 * radius }}>{item.project.icon?.value ?? "📌"}</span>;
@@ -165,13 +167,10 @@ export const ProjectItem = (props: Props) => {
                 x={xCoord - radius}
                 y={yCoord - radius}
                 onPointerDown={(evt) => {
-
                     handlePointerDown(index, evt)
                 }}
                 onDoubleClick={(_) => {
-
                     onShowDetails(item.project.id)
-
                 }}
                 style={{
                     height: 2 * radius,

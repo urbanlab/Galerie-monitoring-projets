@@ -17,33 +17,37 @@ interface Props {
     filters: Filters;
     setFilters: (filters: Filters) => void;
     columns: Columns | undefined;
-    setColumns: (columns: Columns) => void;
 }
 
 export const WeatherPage = (props: Props) => {
-    const { onShowDetails, allProjects, setAllProjects, refresh, filters, setFilters, columns, setColumns } = props;
-    const [elements, setElements] = useState<DragElement[]>([]);
-    const [allProjectsHistory, setAllProjectsHistory] = useState<AllProjectsHistory>(new AllProjectsHistory([]));
-    const [menu, setMenu] = useState<string>(MenuOptions.FILTER);
+    const { onShowDetails, allProjects, setAllProjects, refresh, filters, setFilters, columns } = props;
+    const [elements, setElements] = useState<DragElement[]>([]); //éléments à afficher sur le graphe
+    const [allProjectsHistory, setAllProjectsHistory] = useState<AllProjectsHistory>(new AllProjectsHistory([])); //historique des projets
+    const [menu, setMenu] = useState<string>(MenuOptions.FILTER); //menu affiché (filtres ou options)
     const menuRef = useRef<any>(null);
     const sliderRef = useRef<any>(null);
-    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().slice(0, 10));
-    const [showAllLabels, setShowAllLabels] = useState<boolean>(false);
-    const [elementsScale, setElementsScale] = useState<number>(1);
+    const today = new Date().toISOString().slice(0, 10); //date du jour au format YYYY-MM-DD
+    const [selectedDate, setSelectedDate] = useState<string>(today); //date sélectionnée dans le slider
+    const [showAllLabels, setShowAllLabels] = useState<boolean>(false); //afficher ou non tous les labels
+    const [elementsScale, setElementsScale] = useState<number>(1); //échelle des éléments (taille des icones)
 
-    const chartProjects = allProjects.filter(
-        (project) => project.meteo_precise != null && project.etape_precise != null,
+    const chartProjects = allProjects.filter( //projets affichés sur le graphe (filtrés)
+        (project) =>
+            project.meteo_precise != null &&
+            project.etape_precise != null
     );
 
     async function updateProject(projectId: string) {
         //fonction qui met à jour un projet
         privateQuery("GET", `/project/${projectId}`, null)
             .then((updatedProject: Projet) => {
+                //on met à jour le projet dans la liste des projets
                 var newProjects = allProjects.map((project) =>
                     project.id === updatedProject.id ? updatedProject : project,
                 );
-                setAllProjects(newProjects);
-                getAllProjectsHistory();
+                setAllProjects(newProjects); //on met à jour la liste des projets
+                updateProjectHistory(updatedProject); //on met à jour l'historique des projets
+
             })
             .catch((err: any) => {
                 console.log(err);
@@ -75,10 +79,45 @@ export const WeatherPage = (props: Props) => {
             });
     }
 
+    useEffect(() => {
+        getAllProjectsHistory();
+    }, []);
+
+    const updateProjectHistory = (project: Projet) => {
+        //fonction qui met à jour l'historique des projets quand on bouge un projet sur le graphe
+        if (project.etape_precise == null || project.meteo_precise == null) {
+            return;
+        }
+
+        var newProjectHistoryItem = {
+            project_id: project.id,
+            date: today,
+            etape_precise: project.etape_precise!,
+            meteo_precise: project.meteo_precise!,
+        };
+        if (allProjectsHistory.fullHistory.filter((projectHistoryItem) =>
+            projectHistoryItem.project_id === project.id &&
+            projectHistoryItem.date === today).length == 0) {
+            //si l'historique du projet pour la date du jour n'existe pas, on l'ajoute
+            setAllProjectsHistory(new AllProjectsHistory([...allProjectsHistory.fullHistory, newProjectHistoryItem]));
+            return;
+        }
+        else {
+            //sinon on le met à jour
+            var newProjectHistory = allProjectsHistory.fullHistory.map((projectHistoryItem) =>
+                projectHistoryItem.project_id === project.id &&
+                    projectHistoryItem.date === today
+                    ? newProjectHistoryItem
+                    : projectHistoryItem,
+            );
+            setAllProjectsHistory(new AllProjectsHistory(newProjectHistory));
+        }
+    };
+
     function handleExportWeather(type: string) {
         //fonction qui exporte le svg
         const svg: any = document.querySelector(".weatherChart svg");
-        let date = new Date().toISOString().slice(0, 10);
+        let date = today;
 
         if (filters.mode == MenuMode.EVOLUTION) {
             date = selectedDate;
@@ -101,35 +140,28 @@ export const WeatherPage = (props: Props) => {
 
     const startAnimation = AnimateElements(setElements);
 
-    const setElementAtThisDate = (date: string) => {
-        var endElements: DragElement[] = [];
-        //si c'est la date du jour, on affiche les mêmes projets que dans le mode édition pour pas refaire une requete pour mettre à jour allProjectsHistory
-        var projectsList =
-            date == new Date().toISOString().slice(0, 10)
-                ? chartProjects
-                : allProjectsHistory.getListOfProjectsAtThisDate(allProjects, date);
+    //initialize elements for evolution mode
+    useEffect(() => {
+        if (filters.mode == MenuMode.EVOLUTION) {
+            var endElements: DragElement[] = [];
+            //si c'est la date du jour, on affiche les mêmes projets que dans le mode édition pour pas refaire une requete pour mettre à jour allProjectsHistory
+            var projectsList = allProjectsHistory.getListOfProjectsAtThisDate(allProjects, selectedDate)
 
-        for (var project of projectsList) {
-            if (filters.isProjectVisible(project)) {
-                endElements.push({
-                    xNorm: project.etape_precise ?? 0,
-                    yNorm: 1 - (project.meteo_precise ?? 1),
-                    project: project,
-                });
+            for (var project of projectsList) {
+                if (filters.isProjectVisible(project)) {
+                    endElements.push({
+                        xNorm: project.etape_precise ?? 0,
+                        yNorm: 1 - (project.meteo_precise ?? 1),
+                        project: project,
+                    });
+                }
             }
             startAnimation(elements, endElements);
         }
-    };
+    }, [selectedDate, allProjectsHistory, filters]);
 
-    useEffect(() => {
-        setElementAtThisDate(selectedDate);
-    }, [selectedDate]);
 
-    useEffect(() => {
-        getAllProjectsHistory();
-    }, []);
-
-    //initialize elements
+    //initialize elements for edition mode
     useEffect(() => {
         if (filters.mode == MenuMode.EDITION) {
             var newElements: DragElement[] = [];
@@ -148,29 +180,8 @@ export const WeatherPage = (props: Props) => {
                 }
             }
             startAnimation(elements, newElements, 150);
-        } else {
-            setElementAtThisDate(selectedDate);
         }
     }, [refresh, filters]);
-
-    const buildChart = () => {
-        return (
-            <div style={styles.chartContainer} className="weatherChart">
-                <WeatherChart
-                    columns={columns}
-                    elements={elements}
-                    setElements={setElements}
-                    onShowDetails={onShowDetails}
-                    saveProject={saveProject}
-                    mode={filters.mode}
-                    menuRef={menuRef}
-                    sliderRef={sliderRef}
-                    showAllLabels={showAllLabels}
-                    elementsScale={elementsScale}
-                />
-            </div>
-        );
-    };
 
     return (
         <div className="px-3 py-3">
@@ -188,7 +199,20 @@ export const WeatherPage = (props: Props) => {
                 setElementsScale={setElementsScale}
             />
 
-            {buildChart()}
+            <div style={styles.chartContainer} className="weatherChart">
+                <WeatherChart
+                    columns={columns}
+                    elements={elements}
+                    setElements={setElements}
+                    onShowDetails={onShowDetails}
+                    saveProject={saveProject}
+                    mode={filters.mode}
+                    menuRef={menuRef}
+                    sliderRef={sliderRef}
+                    showAllLabels={showAllLabels}
+                    elementsScale={elementsScale}
+                />
+            </div>
             {filters.mode == MenuMode.EVOLUTION && (
                 <div className="d-flex" style={styles.sliderContainer} ref={sliderRef}>
                     <TimeSlider allProjectsHistory={allProjectsHistory} onChange={setSelectedDate} />

@@ -1,16 +1,16 @@
 import { ProjectHistoryItem, Projet } from "../../models";
 
+
 export interface DragElement {
-    xNorm: number;
-    yNorm: number;
-    xStart?: number; //valeur avant déplacement pour comparer s'il le projet à bougé ou non
-    yStart?: number;
-    offsetX?: number;
-    offsetY?: number;
-    color?: string;
-    project: Projet;
-    active?: boolean;
-    opacity?: number;
+    xNorm: number; //position x normalisée (entre 0 et 1) de l'élément
+    yNorm: number; //position y normalisée (entre 0 et 1) de l'élément
+    xStart?: number; //position x de départ de l'élément
+    yStart?: number; //position y de départ de l'élément
+    offsetX?: number; //offset x de l'élément par rapport à la souris
+    offsetY?: number; //offset y de l'élément par rapport à la souris
+    project: Projet; //projet associé à l'élément
+    active?: boolean; //indique si l'élément est actif (sélectionné)
+    opacity?: number; //opacité de l'élément (pour l'animation + filtres)
 }
 
 export class Filters {
@@ -27,13 +27,14 @@ export class Filters {
         this.directeurOuReferentsProjet = directeurOuReferentsProjet;
         this.mode = mode;
     }
-    typeActivite: string[];
-    politiquesPubliques: string[];
-    directeurOuReferentsProjet: string[];
-    etat: string[];
-    mode: string;
+    typeActivite: string[]; // liste des types d'activité à afficher (si vide, affiche toutes les activités)
+    politiquesPubliques: string[]; // liste des politiques publiques à afficher (si vide, affiche toutes les politiques publiques)
+    directeurOuReferentsProjet: string[]; // liste des directeurs ou référents de projet à afficher (si vide, affiche tous les directeurs et référents de projet)
+    etat: string[]; // liste des états à afficher (si vide, affiche tous les états)
+    mode: string; // mode d'affichage (filtres ou options)
 
     isProjectVisible = (project: Projet) => {
+        // retourne true si le projet est visible avec les filtres actuels, false sinon
         let isVisible = true;
 
         if (
@@ -74,6 +75,7 @@ export class Filters {
 }
 
 export class AllProjectsHistory {
+    //classe qui contient l'historique de tous les projets + méthodes pour récupérer les données de l'historique
     constructor(data: ProjectHistoryItem[] = []) {
         this.fullHistory = data;
         this.listOfDates = this.getListOfDates(data);
@@ -82,20 +84,23 @@ export class AllProjectsHistory {
     listOfDates: string[];
 
     getProjectHistoryById(id: string, date?: string) {
+        //retourne l'historique d'un projet à une date donnée (si date non spécifiée, retourne l'historique complet du projet)
         var projectHistory = this.fullHistory.filter((projectHistory) => projectHistory.project_id === id);
         if (date) {
-            return projectHistory.filter(
+            projectHistory = projectHistory.filter(
                 (projectHistory) => new Date(projectHistory.date).getTime() <= new Date(date).getTime(),
             );
         }
-        return projectHistory;
+        return projectHistory.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     }
 
     getHistoryByDate(date: string) {
+        //retourne l'historique de tous les projets à une date donnée
         return this.fullHistory.filter((projectHistory) => projectHistory.date === date);
     }
 
     getMaxDate() {
+        //retourne la date la plus récente de l'historique
         if (this.listOfDates.length == 0) {
             //date du jour si historique vide
             return new Date().toISOString().slice(0, 10);
@@ -104,6 +109,7 @@ export class AllProjectsHistory {
     }
 
     getMinDate() {
+        //retourne la date la plus ancienne de l'historique
         if (this.listOfDates.length == 0) {
             //date du jour si historique vide
             return new Date().toISOString().slice(0, 10);
@@ -112,6 +118,7 @@ export class AllProjectsHistory {
     }
 
     getListOfDates(data: ProjectHistoryItem[]) {
+        //retourne la liste des dates de l'historique
         var distinctDates: string[] = [];
         for (var item of data) {
             if (!distinctDates.includes(item.date)) {
@@ -122,6 +129,7 @@ export class AllProjectsHistory {
     }
 
     getListOfProjectsAtThisDate(projects: Projet[], date: string) {
+        //retourne la liste des projets avec les données de l'historique à la date donnée
         var projectsAtThisDate: Projet[] = [];
         for (var project of projects) {
             var projectHistory = this.getProjectHistoryById(project.id, date);
@@ -139,12 +147,14 @@ export class AllProjectsHistory {
 }
 
 export enum MenuOptions {
+    //options du menu
     FILTER = "FILTRES",
     OPTIONS = "OPTIONS",
 
 }
 
 export enum MenuMode {
+    //mode d'affichage du graphe
     EDITION = "EDITION",
     EVOLUTION = "EVOLUTION",
 }
