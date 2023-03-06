@@ -55,8 +55,18 @@ async def startup_event():
     global columns
     global projects
     columns = await apiNotion.get_columns_data()
+    order = [
+        "Cadrage",
+        "Idéation",
+        "Conception-Design",
+        "Production",
+        "Expérimentation",
+        "Modélisation - Evaluation",
+        "Déploiement",
+    ]
+    # make sure the order of the steps is correct
+    columns.etapes = sorted(columns.etapes, key=lambda x: order.index(x["text"]))
     projects = await apiNotion.get_all_projects()
-
     logger.info("Projects loaded into cache.")
 
 
