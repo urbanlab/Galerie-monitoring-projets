@@ -43,7 +43,7 @@ columns: Columns = Columns()
 # You can change the password by using the following command:
 erasme_user = User(
     id=1,
-    pwd_hash="$2b$12$wzUMP3nXlpvzjUqXw0knWuIIpo.jQWaOXGDGrxPOwjPPKBbk5x27q",
+    pwd_hash="$2b$12$0Q4U2Zdy81LIEKa3N25YWO6Bjovgym5y84BdqxlI/SQM/taDlrLLC",
 )
 
 

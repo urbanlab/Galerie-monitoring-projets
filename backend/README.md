@@ -134,7 +134,7 @@ erDiagram
 
 Pour installer et exécuter cette API, vous devez effectuer les étapes suivantes :
 
-1. Cloner ce repository.
+1. Se déplacer dans le dossier `backend` du repository.
 2. Creer un environnement virtuel : `python -m venv venv`.
 3. Activer l'environnement virtuel : `venv\Scripts\activate` (Windows) ou `source venv/bin/activate` (Linux).
 4. Installer les dépendances : `pip install -r requirements.txt`.
