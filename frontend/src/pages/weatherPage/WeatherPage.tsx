@@ -197,6 +197,7 @@ export const WeatherPage = (props: Props) => {
                 setShowAllLabels={setShowAllLabels}
                 elementsScale={elementsScale}
                 setElementsScale={setElementsScale}
+                showAllLabels={showAllLabels}
             />
 
             <div style={styles.chartContainer} className="weatherChart">

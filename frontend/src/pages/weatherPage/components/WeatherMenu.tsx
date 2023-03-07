@@ -14,6 +14,7 @@ interface Props {
     filters: Filters;
     setFilters: (filters: Filters) => void;
     handleExportWeather: (type: string) => void;
+    showAllLabels: boolean;
     setShowAllLabels: (showAllLabels: boolean) => void;
     elementsScale: number;
     setElementsScale: (elementsSize: number) => void;
@@ -29,6 +30,7 @@ export const WeatherMenu = (props: Props) => {
         filters,
         setFilters,
         handleExportWeather,
+        showAllLabels,
         setShowAllLabels,
         elementsScale,
         setElementsScale,
@@ -103,7 +105,7 @@ export const WeatherMenu = (props: Props) => {
                 <h1 style={styles.menuTitle}>Affichage</h1>
                 <FormControl>
                     <FormControlLabel
-                        control={<Checkbox onChange={onChange} />}
+                        control={<Checkbox onChange={onChange} checked={showAllLabels} />}
                         label={<Typography style={styles.formControlLabel}>Afficher les labels</Typography>}
                     />
                 </FormControl>
