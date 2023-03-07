@@ -13,7 +13,6 @@ export function TimeSlider(props: Props) {
 
     const formatLabel = (value: number) => {
         let date = new Date(allProjectsHistory.listOfDates[value]);
-
         return date.toLocaleDateString('fr');
     }
 
@@ -79,10 +78,6 @@ export function TimeSlider(props: Props) {
             label: formatLabel(allProjectsHistory.listOfDates.length - 1),
         },
     ];
-
-
-
-
     return (
         <Box sx={{
             width: '100%',

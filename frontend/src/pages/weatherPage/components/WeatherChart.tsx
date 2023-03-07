@@ -36,10 +36,10 @@ export const WeatherChart = (props: Props) => {
             .attr("width", chartDimensions.width)
             .attr("height", chartDimensions.height)
             .attr("viewBox", `0 0 ${chartDimensions.width} ${chartDimensions.height}`)
-            .attr("viewBox", `0 0 ${chartDimensions.width} ${chartDimensions.height}`)
             .attr("overflow", "visible");
 
         const buildGrid = () => {
+            // affichage des lignes horizontales
             for (var i = 1; i < meteos.length; i++) {
                 svg.append("g")
                     .append("line")
@@ -51,8 +51,9 @@ export const WeatherChart = (props: Props) => {
                     .attr("stroke-dasharray", "4"); // make it dashed;;
             }
         };
-
+        //affichage de l'axe des X
         const buildXAxis = () => {
+            //affichage des étapes
             const etapesConfig = {
                 domain: etapes,
                 padding: 0.5,
@@ -117,7 +118,7 @@ export const WeatherChart = (props: Props) => {
 
 
         };
-
+        //affichage de l'axe des Y
         const buildYAxis = () => {
             const yScale = d3.scalePoint().range([0, chartDimensions.height]);
             const yAxis = d3.axisLeft(yScale).tickSize(0);
@@ -154,7 +155,7 @@ export const WeatherChart = (props: Props) => {
         };
 
         const buildBackground = () => {
-            //couleurs de fonds des étapes
+            //Affichage des carrés avec des opacités différentes en fonction de l'étape
             let width = columns?.etapes.length ?? 0 > 0 ? chartDimensions.width / columns!.etapes.length : 0;
             columns?.etapes?.forEach((etape, i) =>
                 svg
@@ -169,7 +170,7 @@ export const WeatherChart = (props: Props) => {
                     .attr("opacity", 0.033 * i),
             );
         };
-
+        //on reset le svg pour pouvoir le reconstruire
         svg.selectAll("g").remove();
         buildBackground();
         buildYAxis();
@@ -178,6 +179,7 @@ export const WeatherChart = (props: Props) => {
     };
 
     function handleResize() {
+        //on récupère la taille de la fenêtre pour pouvoir redimensionner le svg
         let height = window.innerHeight - menuRef.current?.clientHeight - 170
         if (mode == MenuMode.EVOLUTION) {
             height = height - sliderRef.current?.clientHeight
@@ -197,7 +199,33 @@ export const WeatherChart = (props: Props) => {
 
     }, [columns, mode]);
 
+    function handlePointerDown(index1: number, e: React.PointerEvent<SVGElement>) {
+        //fonction appelée quand on clique sur un point
+        let newElements = elements.map(function (item, index2): DragElement {
+            if (index1 === index2) {
+                const el = e.currentTarget;
+                el.setPointerCapture(e.pointerId);
+                const bbox = e.currentTarget.getBoundingClientRect();
+
+                const offsetX = e.clientX - (bbox.left + bbox.right) / 2; //offset par rapport au centre
+                const offsetY = e.clientY - (bbox.top + bbox.bottom) / 2;
+                return {
+                    ...item,
+                    active: true,
+                    offsetX: offsetX,
+                    offsetY: offsetY,
+                    xStart: item.yNorm,
+                    yStart: item.yNorm,
+                };
+            }
+            return item;
+        });
+
+        setElements(newElements);
+    }
+
     function handlePointerMove(e: React.PointerEvent<SVGElement>) {
+        //fonction qui permet de déplacer les points
         if (!elements.map((element) => element.active).includes(true)) return;
         let newElements = elements.map(function (item): DragElement {
             if (item.active === true) {
@@ -219,35 +247,12 @@ export const WeatherChart = (props: Props) => {
     }
 
     function handlePointerUp(e: React.PointerEvent<SVGElement>) {
+        //fonction appelée quand on relache le clique
         let newElements = elements.map(function (item): DragElement {
             if (item.active && (item.xStart != item.yNorm || item.yStart != item.yNorm)) {
                 saveProject(item.project.id, item.xNorm, 1 - item.yNorm);
             }
             return { ...item, active: false };
-        });
-
-        setElements(newElements);
-    }
-
-    function handlePointerDown(index1: number, e: React.PointerEvent<SVGElement>) {
-        let newElements = elements.map(function (item, index2): DragElement {
-            if (index1 === index2) {
-                const el = e.currentTarget;
-                el.setPointerCapture(e.pointerId);
-                const bbox = e.currentTarget.getBoundingClientRect();
-
-                const offsetX = e.clientX - (bbox.left + bbox.right) / 2; //offset par rapport au centre
-                const offsetY = e.clientY - (bbox.top + bbox.bottom) / 2;
-                return {
-                    ...item,
-                    active: true,
-                    offsetX: offsetX,
-                    offsetY: offsetY,
-                    xStart: item.yNorm,
-                    yStart: item.yNorm,
-                };
-            }
-            return item;
         });
 
         setElements(newElements);
@@ -278,7 +283,7 @@ export const WeatherChart = (props: Props) => {
         >
             <svg
                 overflow="visible"
-                x="60"
+                x={styles.chartMargin}
                 width={chartDimensions.width}
                 height={chartDimensions.height}
             >

@@ -81,7 +81,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                         <div className="p-2 bg-light" style={styles.shadow}>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <p style={styles.title} className="m-2">
-                                    Nombre des projets selon l'étape
+                                    Projets par étape
                                 </p>
                                 <DownloadButton svg={selectSvg("barchart")} fileName="BarChart" />
                             </div>
@@ -98,7 +98,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                         <div className="p-2 bg-light" style={styles.shadow}>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <p style={styles.title} className="m-2">
-                                    Méteo
+                                    Météo
                                 </p>
                                 <DownloadButton svg={selectSvg("MeteoCircle")} fileName="MeteoCircleChart" />
                             </div>
@@ -130,7 +130,7 @@ export const HomePage = ({ projets, setIsLoading, showProjectsTableModal }: Prop
                         <div className="p-2 bg-light" style={styles.shadow}>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <p style={styles.title} className="m-2">
-                                    Status des projets
+                                    Statut des projets
                                 </p>
                                 <DownloadButton svg={selectSvg("PieChart")} fileName="PieChart" />
                             </div>

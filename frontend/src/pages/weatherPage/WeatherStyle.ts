@@ -1,5 +1,5 @@
 const spacing = "3px";
-const chartMargin = 60;
+const chartMargin = 60; //marge à gauche et en dessous du container svg du graphique pour afficher les axes correctement
 
 const frame = {
     backgroundColor: "#ebebeb",

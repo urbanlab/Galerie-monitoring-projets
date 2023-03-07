@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 
-interface NavBarProps {}
+interface NavBarProps { }
 
 /*
     This component is used to display the navigation bar.
@@ -14,10 +14,10 @@ const NavBar: React.FC<NavBarProps> = () => {
     const imagePath = require(`../assets/logo_erasme.png`);
 
     const navItems = [
-        { path: "/", label: "Home" },
-        { path: "/table", label: "Table" },
-        { path: "/weather", label: "Weather" },
-        { path: "/circleCharts", label: "Circle Charts" },
+        { path: "/", label: "Accueil" },
+        { path: "/table", label: "Projets" },
+        { path: "/weather", label: "Météo" },
+        { path: "/circleCharts", label: "Bulles" },
     ];
 
     useEffect(() => {

@@ -192,7 +192,6 @@ const App = () => {
                                     filters={filters}
                                     setFilters={setFilters}
                                     columns={columns}
-                                    setColumns={setColumns}
                                 />
                             </PrivateRoute>
                         }
