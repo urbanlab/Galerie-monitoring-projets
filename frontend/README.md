@@ -91,6 +91,7 @@ La page liste des projets permet à l'utilisateur de visualiser la liste des pro
 
 La page Méteo / Avancement permet à l'utilisateur de visualiser les informations sur la météo et l'avancement des projets. Elle permet aussi me déplacer les projets sur les deux axes (Météo et Avancement).
 
+Une documentation plus détaillée est disponible [ici](src/pages/weatherPage/README.md).
 
 ### Page circle Charts
 

@@ -4,22 +4,23 @@ Mise en forme des données du catalogue projet ERASME présent sur Notion, l'obj
 
 ## Table des matières
 
-- [Présentation du projet](#présentation-du-projet)
-- [Technologies utilisées](#technologies-utilisées)
-- [Installation](#installation)
-  - [Sans Docker](#sans-docker)
-  - [Avec Docker](#avec-docker)
-  - [Variables d'environnement](#variables-d'environnement)
-    - [Pour le back-end](#pour-le-back-end)
-    - [Pour le front-end](#pour-le-front-end)
-- [Utilisation pour le développement](#utilisation-pour-le-développement)
-- [Utilisation pour la production](#utilisation-pour-la-production)
-  - [Build des images Docker pour publication](#build-des-images-docker-pour-publication)
-  - [Lancement des conteneurs Docker](#lancement-des-conteneurs-docker)
-- [Détails BDD Notion](#détails-bdd-notion)
-- [Détails fonctionnels](#détails-fonctionnels)
-- [Contributeurs](#contributeurs)
-- [Licence](#licence)
+-   [Présentation du projet](#présentation-du-projet)
+-   [Technologies utilisées](#technologies-utilisées)
+-   [Installation](#installation)
+    -   [Sans Docker](#sans-docker)
+    -   [Avec Docker](#avec-docker)
+    -   [Variables d'environnement](#variables-denvironnement)
+        -   [Pour le back-end](#pour-le-back-end)
+        -   [Pour le front-end](#pour-le-front-end)
+-   [Utilisation pour le développement](#utilisation-pour-le-développement)
+-   [Utilisation pour la production](#utilisation-pour-la-production)
+    -   [Build des images Docker pour publication](#build-des-images-docker-pour-publication)
+    -   [Lancement des conteneurs Docker](#lancement-des-conteneurs-docker)
+-   [Détails BDD Notion](#détails-bdd-notion)
+-   [Détails fonctionnels](#détails-fonctionnels)
+-   [Pistes d'amélioration](#pistes-damélioration)
+-   [Contributeurs](#contributeurs)
+-   [Licence](#licence)
 
 ## Présentation du projet
 
@@ -29,10 +30,11 @@ Ce projet est une application web développée en utilisant React en Typescript 
 
 ## Technologies utilisées
 
-- [React](https://reactjs.org/) Pour le front-end, nous utilisons React en Typescript. React est un framework JavaScript qui permet de créer des applications web dynamiques et interactives. Il est basé sur le principe de composants, qui permettent de créer des éléments réutilisables et modulaires.
-- [Typescript](https://www.typescriptlang.org/) est un langage de programmation qui est un sur-ensemble de JavaScript. Il permet d'ajouter des types statiques à JavaScript, ce qui permet de détecter plus facilement les erreurs de programmation.
-- [FastAPI](https://fastapi.tiangolo.com/) pour le back-end, c'est un framework Python moderne et rapide pour créer des API. Il est basé sur des standards ouverts comme OpenAPI et JSON Schema, et est conçu pour être facile à utiliser et à apprendre.
-- [Notion](https://developers.notion.com/) est une application de gestion de notes et de projets. Nous utilisons l'API Notion pour récupérer les données de la base de données des projets ERASME.
+-   [React](https://reactjs.org/) Pour le front-end, nous utilisons React en Typescript. React est un framework JavaScript qui permet de créer des applications web dynamiques et interactives. Il est basé sur le principe de composants, qui permettent de créer des éléments réutilisables et modulaires.
+-   [Typescript](https://www.typescriptlang.org/) est un langage de programmation qui est un sur-ensemble de JavaScript. Il permet d'ajouter des types statiques à JavaScript, ce qui permet de détecter plus facilement les erreurs de programmation.
+-   [FastAPI](https://fastapi.tiangolo.com/) pour le back-end, c'est un framework Python moderne et rapide pour créer des API. Il est basé sur des standards ouverts comme OpenAPI et JSON Schema, et est conçu pour être facile à utiliser et à apprendre.
+-   [Notion](https://developers.notion.com/) est une application de gestion de notes et de projets. Nous utilisons l'API Notion pour récupérer les données de la base de données des projets ERASME.
+-   [Bootstrap](https://getbootstrap.com/) est un framework CSS qui permet de créer des interfaces web responsives et modernes.
 
 Des outils supplémentaires sont utilisés pour le développement, comme [Docker](https://www.docker.com/) pour le déploiement, [Docker Compose](https://docs.docker.com/compose/) pour la gestion des conteneurs.
 
@@ -42,7 +44,7 @@ Des outils supplémentaires sont utilisés pour le développement, comme [Docker
 
 1. Clonez ce dépôt avec `git clone https://github.com/urbanlab/Galerie-monitoring-projets.git`
 2. Accédez au dossier du projet avec `cd Galerie-monitoring-projets`
-3. Pour le back-end :
+3. Pour le back-end **[PYTHON 3.10]**:
     - Créez un environnement virtuel avec `python -m venv venv`
     - Activez l'environnement virtuel avec `source venv/bin/activate` ou `venv\Scripts\activate.bat` sous Windows
     - Installez les dépendances avec `pip install -r requirements.txt`
@@ -59,7 +61,7 @@ Des outils supplémentaires sont utilisés pour le développement, comme [Docker
 
 1. Clonez ce dépôt avec `git clone https://github.com/urbanlab/Galerie-monitoring-projets.git`
 2. Accédez au dossier du projet avec `cd Galerie-monitoring-projets`
-3. QUID DES VARIABLES D'ENVIRONNEMENTS ??
+3. Définir les variables d'environnements dans des fichiers `backend.env` et `frontend.env` à la racine du projet en se référant a la section [Variables d'environnement](#variables-denvironnement)
 4. Lancez le serveur avec `docker-compose up --build`
 5. Accédez à l'application à l'adresse <http://localhost:3000> dans votre navigateur
 
@@ -126,54 +128,61 @@ Avec les noms qui correspondent à votre docker hub.
 
 La base de données Notion utilisée par l'application necessite une structure particulière. Elle doit contenir les colonnes suivantes (avec les types de données correspondants):
 
-| Nom de la colonne Notion                  | Type Notion   | Type dans Python   |
-| ----------------------------------------- | ------------- | ------------------ |
-| "id" [par défaut]                         | /             | str                |
-| "url"  [par défaut]                       | /             | str                |
-| "icon"  [par défaut]                      | /             | icon               |
-| "Projet"                                  | Title         | str                |
-| "Type d'activité"                         | Select        | colored_text       |
-| "Objet"                                   | Text          | str                |
-| "Etat"                                    | Select        | colored_text       |
-| "Etape"                                   | Multi-Select  | List[colored_text] |
-| "Etape précise"  [*](#nouvelles-colonnes) | Number (%)    | int                |
-| "Météo"                                   | Select        | str                |
-| "Météo précise"  [*](#nouvelles-colonnes) | Number (%)    | int                |
-| "Commentaire météo"  [*](#nouvelles-colonnes) | Text          | str                |
-| "Politiques publiques"                    | Multi-Select  | List[colored_text] |
-| "Directeur de projet"                     | People        | List[people]       |
-| "Chef de projet / Referent"               | People        | List[people]       |
-| "Directions métiers"                      | Multi-Select  | List[colored_text] |
-| "Période principale / réalisation"        | Date (full)   | periode            |
-| "Période préparatoire"                    | Date (full)   | periode            |
-| "Charge Erasme Globale (JH)"              | Number        | int                |
-| "Besoins Lab"                             | Multi-Select  | List[colored_text] |
-| "Budget global (Interne et ext)"          | Number (€)    | int                |
+| Nom de la colonne Notion                      | Type Notion  | Type dans Python   |
+| --------------------------------------------- | ------------ | ------------------ |
+| "id" [par défaut]                             | /            | str                |
+| "url" [par défaut]                            | /            | str                |
+| "icon" [par défaut]                           | /            | icon               |
+| "Projet"                                      | Title        | str                |
+| "Type d'activité"                             | Select       | colored_text       |
+| "Objet"                                       | Text         | str                |
+| "Etat"                                        | Select       | colored_text       |
+| "Etape"                                       | Multi-Select | List[colored_text] |
+| "Etape précise" [\*](#nouvelles-colonnes)     | Number (%)   | int                |
+| "Météo"                                       | Select       | str                |
+| "Météo précise" [\*](#nouvelles-colonnes)     | Number (%)   | int                |
+| "Commentaire météo" [\*](#nouvelles-colonnes) | Text         | str                |
+| "Politiques publiques"                        | Multi-Select | List[colored_text] |
+| "Directeur de projet"                         | People       | List[people]       |
+| "Chef de projet / Referent"                   | People       | List[people]       |
+| "Directions métiers"                          | Multi-Select | List[colored_text] |
+| "Période principale / réalisation"            | Date (full)  | periode            |
+| "Période préparatoire"                        | Date (full)  | periode            |
+| "Charge Erasme Globale (JH)"                  | Number       | int                |
+| "Besoins Lab"                                 | Multi-Select | List[colored_text] |
+| "Budget global (Interne et ext)"              | Number (€)   | int                |
 
 where (in Python):
 
-- `colored_text` is a `dict` with the following keys : `text`, `color`
-- `people` is a `dict` with the following keys : `id`, `name`, `avatar_url`
-- `periode` is a `dict` with the following keys : `start`, `end`
+-   `colored_text` is a `dict` with the following keys : `text`, `color`
+-   `people` is a `dict` with the following keys : `id`, `name`, `avatar_url`
+-   `periode` is a `dict` with the following keys : `start`, `end`
 
 #### Nouvelles colonnes
 
-[*](#nouvelles-colonnes) Ce sont les colonnes qui ont été ajoutées par rapport à la base de données initiale.
+[\*](#nouvelles-colonnes) Ce sont les colonnes qui ont été ajoutées par rapport à la base de données initiale.
 
 ## Détails fonctionnels
 
 Des détails sur les fonctionnements respectifs du back-end et du front-end sont disponibles dans les README de chacun des dossiers :
 
-- [backend/README.md](backend/README.md)
-- [frontend/README.md](frontend/README.md)
+-   [backend/README.md](backend/README.md)
+-   [frontend/README.md](frontend/README.md)
+
+## Pistes d'amélioration
+
+Nous avons identifié plusieurs pistes d'amélioration pour ce projet :
+
+-   Pour la page de méteo, actuellement le rafraichissement de la page est nécessaire pour que les données soient mises à jour. Il serait intéressant de mettre en place un système de rafraichissement automatique des données. Peut-être en utilisant un web socket ?
+-   Toujours sur la page méteo, il est possible d'exporter sous le format .png mais les icones qui proviennet d'images uploadées ne sont pas prises en compte. Il faudrait trouver une solution pour que les icones soient prises en compte dans l'export.
 
 ## Contributions
 
 Le projet est initialement développé par 3 étudiants du Centrale Digital Lab :
 
-- Théophile POIRIER (tpoirier.341@gmail.com)
-- Timothée BARY (timothee.barry1@ecl20.ec-lyon.fr)
-- Farouk NASRY (farouk.nasri@auditeur.ec-lyon.fr)
+-   Théophile POIRIER (tpoirier.341@gmail.com)
+-   Timothée BARY (timothee.barry1@ecl20.ec-lyon.fr)
+-   Farouk NASRY (farouk.nasri@auditeur.ec-lyon.fr)
 
 Si vous souhaitez contribuer à ce projet, n'hésitez pas à contacter l'un des développeurs ci-dessus pour discuter de vos idées et voir comment vous pouvez aider. Les contributions sont les bienvenues, que ce soit pour signaler des problèmes, suggérer des améliorations, ou soumettre des modifications de code.
 
