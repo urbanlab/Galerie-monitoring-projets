@@ -69,10 +69,8 @@ def parse_notion_page(page: Raw_Notion_Page) -> Projet:
         directeur_projet=[
             people(
                 id=prop["Directeur de projet"]["people"][j]["id"],
-                name=prop["Directeur de projet"]["people"][j]["name"],
-                avatar_url=prop["Directeur de projet"]["people"][j]["avatar_url"]
-                if prop["Directeur de projet"]["people"][j]["avatar_url"]
-                else None,
+                name=prop["Directeur de projet"]["people"][j].get("name", ""),
+                avatar_url=prop["Directeur de projet"]["people"][j].get("avatar_url", None),
             )
             for j in range(len(prop["Directeur de projet"]["people"]))
         ]
